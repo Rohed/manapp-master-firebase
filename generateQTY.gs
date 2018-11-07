@@ -1,5 +1,5 @@
 function generatePremixBrandUnbrand(){
-  var PC=base.getData('References');
+  var PC=base.getData('References/ProductCodes');
   var PCList=JSONtoARR(PC);
   var sheets=['PremixesTypes','UnbrandedTypes','BrandedTypes'];
   var toCreatePremix=[];
@@ -251,7 +251,7 @@ var retArr=[];
 var params={
 
 //orderBy:'flavour'
-orderBy : 'name',
+orderBy : ['name'],
 
 };
 var data=JSONtoARR(base.getData(page))

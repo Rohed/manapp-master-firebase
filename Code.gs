@@ -31,7 +31,6 @@ var SCHEDULES_FOLDER='1fTERlkL5bPu7UzUYkGfgaQF87RHxNMlj';
 
 var NODE_PATH='manapp';
 var SERVER_URL = 'http://factory-dev-adm.gbvco.co.uk/';
-var DATABASE_URL = 'http://factory-dev-adm.gbvco.co.uk/manapp/db';
 
 var secret='2Ue42tEo5yfjkZn6Fd6NB4eNygOEGJPXjcjxGy2d';
 var config = {
@@ -42,8 +41,8 @@ var config = {
     storageBucket: "gbvco-vape-factory-solution.appspot.com",
     messagingSenderId: "164416568407"
   };
-//var base = FirebaseApp.getDatabaseByUrl(config.databaseURL,secret);
-   var base =  new Base(DATABASE_URL);
+var base = FirebaseApp.getDatabaseByUrl(config.databaseURL,secret);
+
 
 //var secret='Uvl0pyPGexQvu6vvoR3DMUWFX6l1GTnyxXdSC7jN';
 //var config = {
@@ -60,19 +59,27 @@ var config = {
 var LOGOIMG='1BZiIDAXNW2mNCln5OJdb2bplepctiWhm';
 var BOTTLEIMG='17y_MVC8n7iywrRMgV0RCoxjLXutfHtVE';
 var TITLE='Manchester';
-function testord(){
-
-var data =base.getData('Machines');
-var arr = JSONtoARR(data);
-Logger.log(data);
-}
-
 
 function include(filename) {
     return HtmlService.createHtmlOutputFromFile(filename)
         .getContent();
 }
+function testDoget(){
+var param={
+'parameter':{
+    id:'PASSWORD'
+  }
+}
+doGet(param) 
+}
+function makeDummy(){
+var order = base.getData('Orders/914080');
+order.batch='914081';
+base.updateData('Orders/914081',order)
 
+
+
+}
 function doGet(e) {
 var email=Session.getActiveUser().getEmail();
 var allowed=checkAllowed(email);
@@ -194,7 +201,37 @@ function makeid() {
     return retarr;
   }
   
+
+ function logUser(page,app){
+    var LOGDATA = {
+        status: true,
+        msg: '',
+        action: 'App Opened',
+        batch:app,
+        page: page,
+        user: Session.getActiveUser().getEmail(),
+        data: new Array()
+    };
+ logItem(LOGDATA)
+
+} 
  
+function logItem(item){
+
+//  var status=getStatus();
+//  if(status){
+    item.time=(new Date()).toString();
+  
+    
+     if(item.data){
+    item.data=item.data.join(';');
+    }else{
+    item.data='';
+    }
+    
+    base.pushData('Log/',item); 
+//  }
+}
 function checkAllowedFormOnly(email){
 
 var emails=[
@@ -249,7 +286,76 @@ return false;
 
 
 }
- 
- 
+function getStatus(){
+  var status=base.getData('LogStatus');
+  if(status){
+    return true;
+  }else{
+    return false;
+  }
+  
+  
+}
 
+function setStatusinDB(attr){
+  Logger.log(attr);
+  if(attr=='Off'){
+    var data={
+      status:'On',
+    }
+    base.updateData('LogStatus',data);
+    return true;
+  }else{
+    
+    base.removeData('LogStatus');
+    return false;
+  }
+  
+}
+
+function checkshipping(){
+  var shippingData=base.getData('Shipping');
+  var orders=JSONtoARR(base.getData('Orders'));
+  for(var i=0;i<orders.length;i++){
  
+    var suf = orders[i].batch.substr(-1);
+    if(suf!='O'&&suf!='U'&&suf!='S'&&suf!='B'&&suf!='K'&&orders[i].final_status!=0){
+      var found=false;
+      if(shippingData[orders[i].batch]){
+        found=true;
+      }
+      if(!found){
+        Logger.log(orders[i].batch);
+      }
+      
+    }
+    
+  }
+  
+  
+  
+}
+
+
+  /*
+  
+  function importORDERS(){
+  
+    var secret2='2Ue42tEo5yfjkZn6Fd6NB4eNygOEGJPXjcjxGy2d';
+    var config2 = {
+      apiKey: "AIzaSyAbjFGr0HjZDmM3ybZLzy_u8yyjv2ePe8Q",
+      authDomain: "gbvco-vape-factory-solution.firebaseapp.com",
+      databaseURL: "https://gbvco-vape-factory-solution.firebaseio.com/",
+      projectId: "gbvco-vape-factory-solution",
+      storageBucket: "gbvco-vape-factory-solution.appspot.com",
+      messagingSenderId: "164416568407"
+    };
+    var base2 = FirebaseApp.getDatabaseByUrl(config2.databaseURL,secret2);
+    
+    var data=base2.getData('Orders');
+    
+    base.updateData('Orders',data);
+    
+  
+  
+  }*/

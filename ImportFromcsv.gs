@@ -14,8 +14,8 @@ d3=Utilities.formatDate(new Date(f3), "GMT", "dd-MM-yyyy");
 
 function getLargestBatch(orders){
 
-   var largestBatchRaw=base.getData('highestBatch'); 
-  var largestBatch=largestBatchRaw.batch;
+   var largestBatch=base.getData('highestBatch'); 
+  
   var batches=orders.map(function(obj) { 
     var ret;
     ret= obj.batch;
@@ -38,22 +38,21 @@ function getLargestBatch(orders){
 function saveOrder2(data,row) {
 
 
-    data.removedProduction = 0
+
     data.partialProduction = 0;
     data.partialPackaging = 0;
-    data.removedPackaging = 0
     data.saved = true;
     data.unbranded = 0;
     data.branded = 0;
     data.premixed = 0;
     data.mixing = 0;
     data.backtubed = 0;
-    data.mixing_status = "";
-    data.production_status = "";
-    data.printing_status = "";
-    data.labeling_status = "";
-    data.packaging_status = "";
-    data.final_status = "Not Run";
+    data.mixing_status = 0;
+    data.production_status = 0;
+    data.printing_status = 0;
+    data.labeling_status = 0;
+    data.packaging_status = 0;
+    data.final_status = 0;
     data.row = row;
     data.userset = false;
     var suffix = data.batch.toString().substr(-1);
@@ -96,15 +95,10 @@ function saveOrder2(data,row) {
     data.CBDrecipe = CBDvalue;
     data.CBDvalue = CBDrecipe;
     
-  if (RECIPE.Color) {
+  if(RECIPE.Color){
     var Color = RECIPE.Color;
-    var colorvalue = (QTY * 10 * Color.val);
-    data.Color = Color;
-    data.colorval = colorvalue;
-  }else{
-    data.Color = {name:"",sku:"",val:0};
-    data.colorval = 0;
-    
+    var colorvalue=(QTY*10*Color.val);
+    data.colorval=colorvalue;
   }
   
     
@@ -174,7 +168,7 @@ function saveFileCsv(data, name) {
         
 
         var options = '{';
-      //  var allPC=base.getData("References");
+      //  var allPC=base.getData("References/ProductCodes");
     var allPC='';
           var rawOrders=base.getData('Orders');
 
@@ -238,7 +232,7 @@ ordersByOrderID = {};
                                 Logger.log(values[i][0]);
 
                 var PC = values[i][0];
-                var dataPC = base.getData("References/"+PC);
+                var dataPC = base.getData("References/ProductCodes/"+PC);
                                 Logger.log(dataPC);
 
                 if (dataPC) {
@@ -247,9 +241,9 @@ ordersByOrderID = {};
                            boxname:dataPC.boxname,
 
                            fill:dataPC.fill,
-                            orderdate: 0,
+                            orderdate: '',
                         //    batch: values[i][0],
-                            priority: 0,
+                            priority: '',
                             customer: values[i][2],
                               customerSKU: values[i][3],
                             brand: dataPC.brand,
@@ -332,7 +326,7 @@ ordersByOrderID = {};
                         item.batch='911000';
                       }
                       if(i==values.length-1){
-                        base.updateData('highestBatch/1',{'batch':parseInt(batch,10)});
+                        base.updateData('',{'highestBatch':parseInt(batch,10)});
                       }  
                         var resp = saveOrder2(item,row);
                         LOGDATA.data.push(['Added Batch',item.batch +'With Order ID: '+orderID ]);
@@ -384,15 +378,16 @@ ordersByOrderID = {};
       orderID='';
       dat1='';
        newPRIORITIES = uniq3(newPRIORITIES);
-      for(var i =0 ; i < newPRIORITIES.length; i++){
-        if(newPRIORITIES[i][0]){
-          
+       for(var i =0 ; i < newPRIORITIES.length; i++){
+         if(newPRIORITIES[i][0]){
+         
           setPriorityARR(newPRIORITIES);
           break;
-        }
-        
-      }
-      return msg+' <br> Reached Line: '+i;
+         }
+       
+       }
+        //setPriorityARR(newPRIORITIES);
+      return msg+' '+i;
     } catch (e) {
      LOGDATA.data.push(['Failed: ',e.toString()]); 
       logItem(LOGDATA);

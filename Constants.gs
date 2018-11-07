@@ -1,6 +1,6 @@
 var sheets=['MixingTeam','Production','Printing','Labelling','Packaging','Shipping'];
-var QTYSHEETS=['Misc','Packages','Flavours','Labels','Lids','Boxes','PremixesTypes','UnbrandedTypes','BrandedTypes'];
- 
+var QTYSHEETS=['Misc','Packages','Flavours','Labels','Lids','Boxes'];
+
 var RESTORE_PASSWORD = "123";
 var PASSWORD='PASSWORD';
 var SLSHEETPASSWORD="SLSHEET";
@@ -34,45 +34,6 @@ var list=[['VG/PG : 50 / 50 Nicotine : 3MG',5050,3,428,434,53,200],
 return list;
 }
 
-
-var IDENTIFIERS = {
-  BottleTypes : "sku",
- Boxes : "sku",
- BrandedTypes : "sku",
- Brands : "sku",
- Color : "sku",
- Customers : "sku",
- FillLevels : "sku",
- FlavourMixes :"sku",
- FlavourMixOrders : "batch",
- Flavours : "sku",
- highestBatch :"batch",
- Inventory : "key",
- Labelling : "batch",
- Labels : "sku",
- Lids : "sku",
- Log : "id",
- Machines : "id",
- Misc : "name",
- Mixing : "batch",
- MixingTeam : "batch",
- Orders : "batch",
- Packages : "sku",
- Packaging : "batch",
- PremixColoring : "batch",
- PremixesTypes : "sku",
- Printing : "batch",
- Production : "batch",
- Recipes : "id",
- References : "productcode",
- SchedulesBreaks : "day",
- SchedulesReference : "id",
- Schedules : "id",
- Shipping : "batch",
- UnbrandedTypes : "sku",
- importBlankPCPD : "key",
- times : "id",
-};
 
 function jsonConcat(o1, o2) {
  for (var key in o2) {
@@ -109,29 +70,9 @@ function JSONtoARR(data) {
   
 }
 
-function ARRtoJSON(data, page) {
-  if (data) {
-    var obj = {};
- if (data.length > 0) {
-    data.map(function(item) {
-      if (item[IDENTIFIERS[page]]) {
-        obj[item[IDENTIFIERS[page]]] = item;
-      }
-    });
-
-    return obj;
-    } else {
-      return {};
-    }
-  } else {
-    return {};
-  }
-};
-
 function getBrandName(data,BB){
   if(BB){
-  var fullProd =base.getData('References/'+data.productcode);
-  var dat = fullProd.linkedBB;
+  var dat=base.getData('References/ProductCodes/'+data.productcode+'/linkedBB');
   if(dat){
   return dat;
   }else{
@@ -144,13 +85,13 @@ function getBrandName(data,BB){
 }
 
 function getUnbrandName(data){
- var dat=base.getData('References/'+data.productcode);
+ var dat=base.getData('References/ProductCodes/'+data.productcode);
  generateForSingleUnbrand2(dat.unbrandSKU, dat.unbranddescr);
 return dat.unbrandSKU;
 }
 
 function getPremixSKU(data,colored){
- var dat=base.getData('References/'+data.productcode);
+ var dat=base.getData('References/ProductCodes/'+data.productcode);
 
    
  
@@ -222,6 +163,7 @@ return data.filter(function(item){return item.name }).sort(sortSTRINGLH('name'))
 
 
 
+
 }
 
 
@@ -252,9 +194,9 @@ return data;//.sort(superSort1('name'));
 function getFlavourDropdown(){
 
 
-var data=JSONtoARR(base.getData('Flavours'));
+var data=base.getData('Flavours');
 if (data) {
-        var result = data.sort(sortSTRINGLH('name'));
+        var result = JSONtoARR(data).sort(sortSTRINGLH('name'));
 
       
 return result;
@@ -272,9 +214,9 @@ return result;
 function getRecipeDropdown(){
 
 
-var data=JSONtoARR(base.getData('Recipes'));
+var data=base.getData('Recipes');
   if (data) {
-    var result = data.sort(sortSTRINGLH('name'));
+    var result = JSONtoARR(data).sort(sortSTRINGLH('name'));
     var retArr = [];
     for (var i = 0; i < result.length; i++) {
       
@@ -290,92 +232,4 @@ return retArr;
 
 
 
-}
-/*
-id: String,
-  action: String,
-  batch: String,
-  data: String,
-  msg: String,
-  page: String,
-  status: Boolean,
-  time: String,
-  type: String,
-  user: String
-*/
-
-
-function testLog(){
-
-    var LOGDATA = {
-        status: true,
-        msg: '',
-        action: 'New Order',
-        batch: 'testbatchh',
-        page: 'Orders',
-        user: Session.getActiveUser().getEmail(),
-        data: new Array()
-    };
-
- 
- logItem(LOGDATA);
-}
-function logItem(item){
-  
-  item.time=(new Date()).getTime();
-  if(item.data){
-    item.data=item.data.join(';');
-  }else{
-    item.data='';
-  }
-  item.batch=item.batch.toString();
-  item.key= item.time.toString();
-  base.setData('Log/'+item.key,item); 
-  //  }
-}
-
-
-function logUser(page,app){
-  var LOGDATA = {
-    status: true,
-    msg: '',
-    action: 'App Opened',
-    batch:app,
-    page: page,
-    user: Session.getActiveUser().getEmail(),
-    data: new Array()
-  };
-  logItem(LOGDATA)
-  
-} 
-
-
-function getStatus(){
-  var status=base.getData('LogStatus/1');
-  if(status.status == 'On'){
-    return true;
-  }else{
-    return false;
-  }
-  
-  
-}
-
-function setStatusinDB(attr){
- 
-  Logger.log(attr);
-  if(attr=='Off'){
-    var data={
-      status:'On',
-    }
-    base.updateData('LogStatus/1',data);
-    return true;
-  }else{
-     var data={
-      status:'Off',
-    }
-     base.updateData('LogStatus/1',data);
-    return false;
-  }
-  
 }

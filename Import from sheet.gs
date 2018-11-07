@@ -1,4 +1,84 @@
+function myFunction() {
+    var data = getQTY('UnbrandedTypes');
+    var pages = [];
+    var i, j, temparray, chunk = 500;
+    for (i = 0, j = data[0].length; i < j; i += chunk) {
+        temparray = data[0].slice(i, i + chunk);
+        // do whatever
+        pages.push(temparray);
+    }
+    return pages;
+}
 
+function deleteSheet() {
+    base.removeData('Orders');
+}
+
+function importBottles() {
+    var id = '1-WoYSiAUpnEJipjDktr2JyoydsjOZqSkN3TT-YWfD1M';
+    var data = SpreadsheetApp.openById(id).getSheetByName('Sheet1').getDataRange().getValues();
+    for (var i = 1; i < data.length; i++) {
+
+
+
+    }
+
+
+}
+
+function getFromSheetRecipes() {
+    var id = '1WBYmW-OrQj5G9LTj2J9VINUM-T_6gx0QzqPbolXJ7p4';
+    var data = SpreadsheetApp.openById(id).getSheetByName('Sheet1').getDataRange().getValues();
+    for (var i = 13; i < data.length; i++) {
+        var disp = data[i][0].split(' ');
+        var name = {
+            vgint: parseInt(disp[2], 10),
+            pgint: parseInt(disp[4], 10),
+            nicint: parseInt(disp[7].replace('MG', '').replace(':', ''), 10),
+            nicorec: parseInt(data[i][3], 10),
+            Flavrec: parseInt(data[i][4], 10),
+            vgrec: parseInt(data[i][1], 10),
+            pgrec: parseInt(data[i][2], 10),
+            type: 'nic'
+        };
+        // generateForSingleRecipe(name);
+    }
+}
+
+function Import_new_FBC() {
+    base.removeData('Brands');
+    var id = '1SN1WWN9Xc8-sLIGUErzGk2Bu3FHKc3qmL67HLOLqsiM';
+    var ss = SpreadsheetApp.openById(id);
+    var data = ss.getSheetByName('Sheet1').getDataRange().getDisplayValues();
+    var options1 = '{';
+    for (var i = 1; i < data.length; i++) {
+        //Get Flavour
+        // var flavourandrecipe=data[i][0];
+        //  flavourandrecipe=flavourandrecipe.split(' - ');
+        var flavour = data[i][1].replace(/&/g, '').replace('&', '').replace('/', '').replace('(', '').replace(')', '').replace(/\./g, '');
+        /*
+           var brand = data[i][2];
+                var t2 = brand.split(' - ');
+                   if (t2.length > 1) {
+                       brand = t2[0];
+                   }*/
+        var sku = 'BRA' + getRandom() + flavour.substr(0, 1);
+        var dat1 = {
+            sku: sku,
+            name: flavour,
+            /*   Running:0,
+                Reserved:0,
+                Completed:0,
+                Stock:0*/
+
+
+        };
+        options1 += '"' + flavour + '":' + JSON.stringify(dat1) + ',';
+    }
+    options1 += '}';
+    var upload = JSON.parse(options1);
+    base.updateData('Brands', upload)
+}
 function TESTQTY(){
 var id = '11fCoEZYTvbEDiSjxlhn4yxswRme2PyFGCbYKrSe5mX0';
 QTYInport(id)
@@ -147,6 +227,179 @@ function delsht() {
 
 
 
+function createRefferenceDBORIG(id) {
+    //base.removeData('References');
+    var LOGDATA = {
+        status: true,
+        msg: '',
+        action: 'Import PC/PD',
+        batch: 'Spreadsheet',
+        page: 'PC/PD',
+        user: Session.getActiveUser().getEmail(),
+        data: new Array()
+    };
+    id = '1oyXq7lKi3A-wp5qFK6-qXNxQZRkPMLc01r-Gol5iCes';
+    var ss = SpreadsheetApp.openById(id);
+    var data = ss.getSheets()[0].getDataRange().getValues();
+    var options1 = '{';
+    var options2 = '{';
+    var options3 = '{';
+    var options4 = '{';
+    var bottles = JSONtoARR(base.getData('BottleTypes'));
+    var Caps = JSONtoARR(base.getData('Lids'));
+    /*
+                 var headerRow=['Product Code','Product Description','Unbranded SKU','Unbranded Description','Premix SKU','Premix Description','Linked BB SKU','Label Code','Brand','Bottle','Fill','Cap','Packaging','Box','NIB','Flavour','Recipe'];
+   
+         values.push([data[i].prod,data[i].descr,data[i].unbrandSKU,data[i].unbranddescr,data[i].premixSKU,data[i].premixdescr,data[i].linkedBB,data[i].LabelCode,data[i].brand,data[i].btype,data[i].fill,data[i].lid,data[i].packagingType,data[i].boxname,data[i].NIB,data[i].flavour,data[i].recipe.name]);
+  
+     
+     }
+            
+            
+            */
+
+    var recipes = base.getData('Recipes');
+    for (var i = 1; i < data.length; i++) {
+        try {
+            var productcode = data[i][0].replace(/&/g, '').replace('&', '').replace('/', '').replace('(', '').replace(')', '').replace('.', '').replace(/\./g, "");
+            var productdescription = data[i][1].replace(/&/g, '').replace('(', '').replace(')', '').replace('/', '').replace(/\./g, "").replace(/\//g, "");
+            if (data[i][19] == 'Y') {
+                base.removeData('References/ProductCodes/' + productcode);
+
+                base.removeData('References/Descriptions/' + productdescription);
+                LOGDATA.data.push(['Removed:', productcode]);
+            }
+
+            var unbrandSKU = data[i][2];
+            var unbranddescr = data[i][3];
+
+            var premixSKU = data[i][4];
+            var premixdescr = data[i][5];
+
+            var premixSKUColored = data[i][6];
+            var premixdescrColored = data[i][7];
+
+            var linkedBB = data[i][8];
+            var LabelCode = data[i][9];
+            var brand = data[i][11];
+            var btype = data[i][12];
+            var botSKU = data[i][13];
+
+            var fill = data[i][14];
+
+            var lid = data[i][15];
+            var lidSKU = data[i][16];
+
+            var packagingType = data[i][17];
+
+
+            var boxname = data[i][18];
+            var NIB = data[i][19]
+            var flavour = data[i][20];
+            var flavourSKU = data[i][21]
+
+
+            var recipename = data[i][22];
+            if (linkedBB != '' && linkedBB != 0) {} else {
+                linkedBB = 0;
+            }
+            var recipe = recipes[recipename.replace(/\./g, "").replace(/\//g, "")];
+            if (!recipe) {
+                LOGDATA.msg += 'Recipe Not found ' + data[i][16] + ' for item ' + productcode + ' \n ';
+                continue;
+            }
+            if (btype = '') {
+                for (var j = 0; j < bottles.length; j++) {
+                    if (bottles[j].sku == botSKU) {
+
+                        btype = bottles[j].name;
+                        break;
+                    }
+                }
+            }
+            if (lid = '') {
+                for (var j = 0; j < Caps.length; j++) {
+                    if (Caps[j].sku == lidSKU) {
+
+                        lid = Caps[j].name;
+                        break;
+                    }
+                }
+            }
+            var obj1 = {
+                premixdescr: premixdescr,
+                unbranddescr: unbranddescr,
+                premixdescrColored: premixdescrColored,
+
+                premixSKU: premixSKU,
+                premixSKUColored: premixSKUColored,
+                unbrandSKU: unbrandSKU,
+                NIB: NIB,
+                LabelCode: LabelCode,
+                boxname: boxname,
+                fill: fill,
+                btype: btype,
+                lid: lid,
+                recipe: recipe,
+                packagingType: packagingType,
+
+                prod: productcode,
+                descr: productdescription,
+                productcode: productcode,
+                productdescription: productdescription,
+                brand: brand,
+                flavour: flavour,
+
+                linkedBB: linkedBB,
+                botSKU: botSKU,
+                lidSKU: lidSKU,
+            };
+
+
+            // generateForSingleBrand2(productcode,productdescription);
+            options1 += '"' + productcode + '":' + JSON.stringify(obj1) + ',';
+            options2 += '"' + productdescription + '":' + JSON.stringify(obj1) + ',';
+
+
+
+        } catch (e) {
+            Logger.log(i);
+        }
+    }
+    options1 += '}';
+    options2 += '}';
+    var ob1 = JSON.parse(options1);
+    var ob2 = JSON.parse(options2);
+    //   options3 += '}';
+    //   options4 += '}';
+    //  var ob3 = JSON.parse(options3);
+    //  var ob4 = JSON.parse(options4);
+    if (Object.keys(obj1)) {
+        var keys1 = Object.keys(obj1);
+        for (var k = 0; k < keys1.length; k++) {
+            LOGDATA.data.push(['Added:', keys1[k]]);
+
+        }
+    }
+    /*    if(Object.keys(ob3)){ 
+       var keys1=Object.keys(ob3);
+       for(var k=0;k< keys1.length;k++){
+         LOGDATA.data.push(['Added:',keys1[k]]);
+         
+       }
+       }*/
+    var msg = LOGDATA.msg;
+    logItem(LOGDATA);
+    //      base.updateData('References/ProductCodes', ob3);
+
+    //     base.updateData('References/Descriptions', ob4);
+
+    base.updateData('References/ProductCodes', ob1);
+
+    base.updateData('References/Descriptions', ob2);
+
+    return msg + ' \n Updated.';
+}
 function MANUALcreateRefferenceDB(){
 var id = '1pONQ9usFnKUnsoMzFkjz8pM41-7llpLJsL-JPasVTd4';
 
@@ -185,7 +438,307 @@ function createRefferenceDB(id) {
     return response;
 }
 
+function createRefferenceDBxx(id,id1,id2) {
+    // base.removeData('References');
+    var LOGDATA = {
+        status: true,
+        msg: '',
+        action: 'Import PC/PD',
+        batch: 'Spreadsheet',
+        page: 'PC/PD',
+        user: Session.getActiveUser().getEmail(),
+        data: new Array()
+    };
+    //id = '1pcHJxFnwUVD8Wvgw6c_VvUsy2dKefx-FhJS_WNI_5iY';
+    var ss = SpreadsheetApp.openById(id);
+    LOGDATA.batch = ss.getId();
+    var data = ss.getSheets()[0].getDataRange().getValues();
+  if(data.length>600){
+    return 'Please use less than 600 rows.';
+  }
+    var options1 = '{';
+    var options2 = '{';
+    var options3 = '{';
+    var options4 = '{';
+    var bottles = getBottlesDropdown2();
+    var Caps = getLidDropdown2();
+    var addedPCs = [];
+    var addedPDs = [];
+    var recipes = base.getData('Recipes');
+    for (var i = 1; i < data.length; i++) {
+        try {
+            var productcode = data[i][0].replace(/&/g, '').replace('&', '').replace('/', '').replace('(', '').replace(')', '').replace('.', '').replace(/\./g, "");
+            var productdescription = data[i][1].replace(/&/g, '').replace('(', '').replace(')', '').replace('/', '').replace(/\./g, "").replace(/\//g, "");
+            if (data[i][35] == 'Y') {
+                base.removeData('References/ProductCodes/' + productcode);
 
+                base.removeData('References/Descriptions/' + productdescription);
+                LOGDATA.data.push(['Removed:', productcode]);
+            }
+
+            var unbrandSKU = data[i][2];
+            var unbranddescr = data[i][3];
+            generateForSingleUnbrand2(unbrandSKU, unbranddescr);
+            var premixSKU = data[i][4];
+            var premixdescr = data[i][5];
+            generateForSinglePremix2(premixSKU, premixdescr);
+            var premixSKUColored = data[i][6];
+            var premixdescrColored = data[i][7];
+            generateForSinglePremix2(premixSKUColored, premixdescrColored);
+            var linkedBB = data[i][8];
+
+            var brand = data[i][9];
+            var brandSKU = data[i][10];
+            var btype = data[i][11];
+            var botSKU = data[i][12];
+
+            var fill = data[i][13];
+
+            var lid = data[i][14];
+            var lidSKU = data[i][15];
+            //     var headerRow=['Product Code','Product Description','Unbranded SKU','Unbranded Description','Premix SKU','Premix Description',
+            //'Linked BB SKU','Label Code','Brand','Bottle','Bottle SKU','Fill','Cap','Cap SKU','Packaging','Packaging SKU','Box','Box SKU','NIB','Flavour','Recipe','Recipe ID'];
+
+            var packagingTypeName = data[i][16];
+            var packagingTypeSKU = data[i][17];
+            if (packagingTypeSKU) {
+                var packagingType = {
+                    name: packagingTypeName,
+                    sku: packagingTypeSKU,
+                };
+            } else {
+                var packagingType = {
+                    name: '',
+                    sku: '',
+                };
+            }
+            var boxnameName = data[i][18];
+            var boxnameSKU = data[i][19];
+
+            if (boxnameSKU) {
+                var boxname = {
+                    name: boxnameName,
+                    sku: boxnameSKU,
+                };
+            } else {
+                var boxname = {
+                    name: '',
+                    sku: '',
+                };
+            }
+            var NIB = data[i][20]
+            var flavour = {
+                name: '',
+                sku: '',
+            };
+            var flavourName = data[i][21];
+            var flavourSKU = data[i][22];
+            if (flavourSKU) {
+                var flavour = {
+                    name: flavourName,
+                    sku: flavourSKU,
+                };
+            } else {
+                var flavour = {
+                    name: '',
+                    sku: 'NOTFOUND',
+                };
+            }
+
+
+            var recipename = data[i][23];
+            var recipeid = data[i][24];
+            if (recipeid) {
+                var recipe = {
+                    name: recipename,
+                    id: recipeid,
+                };
+            } else {
+                var recipe = {
+                    name: '',
+                    id: 'NOTFOUND',
+                };
+            }
+
+
+            if (linkedBB != '' && linkedBB != 0) {} else {
+                linkedBB = 0;
+            }
+            var recipe = recipes[recipe.id];
+            if (!recipe) {
+                LOGDATA.msg += 'Recipe Not found ' + data[i][21] + ' for item ' + productcode + ' \n ';
+                continue;
+            }
+            if (btype == '') {
+                for (var j = 0; j < bottles.length; j++) {
+                    if (bottles[j].sku == botSKU) {
+
+                        btype = bottles[j].name;
+                        break;
+                    }
+                }
+            }
+            if (lid == '') {
+                for (var j = 0; j < Caps.length; j++) {
+                    if (Caps[j].sku == lidSKU) {
+
+                        lid = Caps[j].name;
+                        break;
+                    }
+                }
+            }
+            var obj1 = {
+                premixdescr: premixdescr,
+                unbranddescr: unbranddescr,
+                premixdescrColored: premixdescrColored,
+
+                premixSKU: premixSKU,
+                premixSKUColored: premixSKUColored,
+                unbrandSKU: unbrandSKU,
+                NIB: NIB,
+
+                boxname: boxname,
+                fill: fill,
+                btype: btype,
+                lid: lid,
+                recipe: recipe,
+                packagingType: packagingType,
+
+                prod: productcode,
+                descr: productdescription,
+                productcode: productcode,
+                productdescription: productdescription,
+                brand: brand,
+                brandSKU: brandSKU,
+                flavour: flavour,
+                linkedBB: linkedBB,
+                botSKU: botSKU,
+                lidSKU: lidSKU,
+                botlabel: data[i][25],
+                botlabelsku: data[i][26],
+                ppbotlabel: data[i][27],
+                ppbotlabelsku: data[i][28],
+
+                packlabel: data[i][29],
+                packlabelsku: data[i][30],
+                pppacklabel: data[i][31],
+                pppacklabelsku: data[i][32],
+                barcode: data[i][33],
+                ecid: data[i][34],
+            };
+
+            //var botlabel,var .botlabelsku,var .ppbotlabel,data[i].ppbotlabelsku,data[i].packlabel,data[i].packlabelsku,data[i].pppacklabel,data[i].pppacklabelsku]);
+
+            options1 += '"' + productcode + '":' + JSON.stringify(obj1) + ',';
+            options2 += '"' + productdescription + '":' + JSON.stringify(obj1) + ',';
+            addedPCs.push(productcode);
+            addedPDs.push(productdescription);
+        } catch (e) {
+            Logger.log(i);
+        }
+    }
+    options1 += '}';
+    options2 += '}';
+    var ob1 = JSON.parse(options1);
+    var ob2 = JSON.parse(options2);
+    options3 += '}';
+    options4 += '}';
+    var ob3 = JSON.parse(options3);
+    var ob4 = JSON.parse(options4);
+    if (ob1) {
+
+        for (var k = 0; k < addedPCs.length; k++) {
+            LOGDATA.data.push(['Added:', addedPCs[k]]);
+
+        }
+    }
+    if (ob3) {
+
+        for (var k = 0; k < addedPDs.length; k++) {
+            LOGDATA.data.push(['Added:', addedPDs[k]]);
+
+        }
+    }
+    var msg = LOGDATA.msg;
+    logItem(LOGDATA);
+    //      base.updateData('References/ProductCodes', ob3);
+
+    //     base.updateData('References/Descriptions', ob4);
+
+    base.updateData('References/ProductCodes', ob1);
+
+    base.updateData('References/Descriptions', ob2);
+
+    return msg + ' \n Updated.';
+}
+
+function updatebotlid() {
+    var bottles = JSONtoARR(base.getData('BottleTypes'));
+    var Caps = JSONtoARR(base.getData('Lids'));
+    var pc = JSONtoARR(base.getData('References/ProductCodes'));
+    var pd = JSONtoARR(base.getData('References/Descriptions'));
+    for (var j = 0; j < pc.length; j++) {
+        for (var i = 0; i < Caps.length; i++) {
+
+            if (Caps[i].name == pc[j].lid) {
+                pc[j].lidSKU = Caps[i].sku;
+                break;
+            }
+        }
+    }
+    for (var j = 0; j < pc.length; j++) {
+        for (var i = 0; i < bottles.length; i++) {
+
+            if (bottles[i].name == pc[j].btype) {
+                pc[j].botSKU = bottles[i].sku;
+                break;
+            }
+        }
+    }
+    for (var j = 0; j < pd.length; j++) {
+        for (var i = 0; i < bottles.length; i++) {
+
+            if (bottles[i].name == pd[j].btype) {
+                pd[j].botSKU = bottles[i].sku;
+                break;
+            }
+        }
+    }
+
+    for (var j = 0; j < pd.length; j++) {
+        for (var i = 0; i < Caps.length; i++) {
+
+            if (Caps[i].name == pd[j].lid) {
+                pd[j].lidSKU = Caps[i].sku;
+                break;
+            }
+        }
+    }
+
+    var options1 = '{';
+    var options2 = '{';
+    for (var i = 0; i < pc.length; i++) {
+        options1 += '"' + pc[i].prod + '":' + JSON.stringify(pc[i]) + ',';
+
+    }
+    for (var i = 0; i < pd.length; i++) {
+        options1 += '"' + pc[i].descr + '":' + JSON.stringify(pd[i]) + ',';
+
+    }
+
+
+    options1 += '}';
+    options2 += '}';
+    var ob1 = JSON.parse(options1);
+    var ob2 = JSON.parse(options2);
+
+    // base.removeData('References');
+
+    base.updateData('References/ProductCodes', ob1);
+
+    base.updateData('References/Descriptions', ob2);
+
+}
 
 function importRecipesFromSheet(id) {
 
@@ -215,7 +768,7 @@ function importRecipesFromSheet(id) {
             continue;
         }
         if (data[i][16] == 'Y') {
-           
+            base.removeData('Recipes/' + id);
 
             base.removeData('Recipes/' + id);
             LOGDATA.data.push(['Removed:', id]);
@@ -281,8 +834,10 @@ function importRecipesFromSheet(id) {
         if (ColorName && ColorName && ColorName) {
             recipe.Color.name = ColorName;
             recipe.Color.sku = ColorSKU;
-            recipe.Color.val = ColorVal ? ColorVal : 0;
-        } 
+            recipe.Color.val = ColorVal;
+        } else {
+            delete recipe.Color;
+        }
         options += '"' + recipe.id + '":' + JSON.stringify(recipe) + ',';
 
 
@@ -1039,7 +1594,8 @@ function importFlavourMixFromSheet(id) {
             continue;
         }
         if (data[i][5] == 'Y') {
-         
+            base.removeData('FlavourMixes/' + name);
+
             base.removeData('FlavourMixes/' + name);
             LOGDATA.data.push(['Removed:', sku]);
             continue;
@@ -1165,7 +1721,7 @@ function importInventoryData(id){
             eta: data[i][5],
             quantity: data[i][6],
             note: data[i][7],
-           key:'undefined'
+           
             
         };
         for(var p=0;p<pages.length;p++){
@@ -1187,7 +1743,7 @@ function importInventoryData(id){
         break;
         }
         }
-    LOGDATA.msg+=saveItem(obj)+'\n';
+    LOGDATA.msg+=saveItem2(obj)+'\n';
     }
      logItem(LOGDATA);
     return LOGDATA.msg;
@@ -1238,3 +1794,70 @@ function intersect(a, b) {
 }
 
 
+ function updatebotlid(){
+   var bottles=JSONtoARR(base.getData('BottleTypes'));
+   var Caps=JSONtoARR(base.getData('Lids'));
+   var pc=JSONtoARR(base.getData('References/ProductCodes'));
+   var pd=JSONtoARR(base.getData('References/Descriptions'));
+     for(var j=0;j<pc.length;j++){   
+   for(var i=0;i<Caps.length;i++){
+
+       if(Caps[i].name==pc[j].lid){
+         pc[j].lidSKU=Caps[i].sku;
+         break;
+       }
+     }
+   }
+     for(var j=0;j<pc.length;j++){ 
+    for(var i=0;i<bottles.length;i++){
+
+       if(bottles[i].name==pc[j].btype){
+         pc[j].botSKU=bottles[i].sku;
+          break;
+       }
+     }
+   }
+  for(var j=0;j<pd.length;j++){ 
+  for(var i=0;i<bottles.length;i++){
+
+     if(bottles[i].name==pd[j].btype){
+     pd[j].botSKU=bottles[i].sku;
+      break;
+     }
+   }
+ }
+ 
+  for(var j=0;j<pd.length;j++){ 
+  for(var i=0;i<Caps.length;i++){
+
+     if(Caps[i].name==pd[j].lid){
+     pd[j].lidSKU=Caps[i].sku;
+      break;
+     }
+   }
+ }
+ 
+   var options1='{'; 
+   var options2='{'; 
+   for(var i=0;i<pc.length;i++){
+     options1 += '"' + pc[i].prod + '":' + JSON.stringify(pc[i]) + ',';
+     
+   }
+   for(var i=0;i<pd.length;i++){
+     options1 += '"' + pc[i].descr + '":' + JSON.stringify(pd[i]) + ',';
+     
+   }
+   
+   
+   options1 += '}';
+   options2 += '}';
+   var ob1 = JSON.parse(options1);
+   var ob2 = JSON.parse(options2);
+   
+// base.removeData('References');
+ 
+   base.updateData('References/ProductCodes', ob1);
+   
+   base.updateData('References/Descriptions', ob2);
+   
+ }
