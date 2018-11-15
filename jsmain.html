@@ -5467,6 +5467,9 @@ switch (type){
      case 'Roundups':
     built= buildRoundups(data);
     break;
+    case 'globalFilter':
+    built= buildglobalFilter(data);
+    break;
   default:
 
   break;
@@ -6584,6 +6587,48 @@ cbd:parseInt($("#roundupcbd").val(),10),
 
 }
 google.script.run.withSuccessHandler(refreshOrdersMSG).updateRoundups(obj);
+
+}
+
+function getglobalFilter(){
+google.script.run.withSuccessHandler(buildhtmlmodal).getglobalFilter();
+
+};
+
+function buildglobalFilter(data){
+var selectedDropdown  = '';
+for(var i = 0; i <7; i++){
+
+selectedDropdown+='<option value="'+i+'"' +(data.months == i ? 'selected' : '' ) + '>';
+if(i == 0){
+selectedDropdown+='All';
+}else if(i==1){
+selectedDropdown+='1 Month';
+}else{
+selectedDropdown+=i+' Months';
+}
+ 
+selectedDropdown+='</option>';
+
+}
+ 
+var html = '';
+html+='\
+<div style="margin:0 auto; width:500px;"><h2>Global Date Filter</h2>';
+html+='<div  ><p><select  class="form-control" type="date" id="globalFilterMonths">'+selectedDropdown+'</select></p>';
+html+='<hr></div>\
+<div>\
+<button type="button" class="btn btn-success sarButton" onclick="saveglobalFilter()">Save Current</button>';
+return html;
+}
+
+function saveglobalFilter(){
+var obj ={
+months:parseInt($("#globalFilterMonths").val(),10),
+ 
+}
+console.log('obj',obj);
+google.script.run.withSuccessHandler(refreshOrdersMSG).updateglobalFilter(obj);
 
 }
 </script>

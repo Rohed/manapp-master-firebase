@@ -158,7 +158,7 @@ function getPackagingDropdown(){
 var data=JSONtoARR(base.getData('Packages'));
 
 
-return data.filter(function(item){return item.name }).sort(sortSTRINGLH('name'));
+return data.sort(sortSTRINGLH('name'));
 
 
 

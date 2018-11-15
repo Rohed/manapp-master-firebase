@@ -32,7 +32,7 @@ function saveItem(data) {
         QTYitem.Stock = 0;
       }
        QTYitem.Running = QTYitem.Running? QTYitem.Running: 0;
-        if(data.key != 'undefined'){
+        if(data.key != 'undefined' && data.key != undefined){
          var olddat=base.getData('Inventory/' + data.key);
            if (data.delivdate&& (olddat.quantity!=data.quantity)) {
                 LOGDATA.data.push(['Added to Stock:', data.quantity]);

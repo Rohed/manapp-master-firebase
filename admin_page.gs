@@ -1039,19 +1039,36 @@ function TESTSEARCHFOR() {
 //
 //    }
 //    searcharr.push(['Shipping', params]);
+var oderdatestart = base.getData("globalFilter/1");
 
+
+
+    searcharr.push(['Orders', params]);
     var params = {
         orderBy: 'final_status',
         equalTo: "Completed",
 
     }
-    searcharr.push(['MixingTeam', params]);
+    searcharr.push(['Orders', params]);
 
    var data=searchFor(searcharr);
     Logger.log(data);
 }
 
 function searchFor(searchARR) {
+    var oderdatestart = base.getData("globalFilter/1");
+    if(oderdatestart){
+      if(oderdatestart.months){
+        if(oderdatestart.months!=0){
+          var params = {
+            orderBy: 'orderdate',
+            startAt: new Date().getTime()-(oderdatestart.months*60*60*1000*24*31),
+            
+          }
+        searchARR.push([searchARR[0][0],params]);
+        }
+      }
+    }
     var searched = [];
     for (var i = 0; i < searchARR.length; i++) {
 
@@ -1771,5 +1788,22 @@ if(!obj.cbd){
 obj.cbd = 1;
 }
 base.updateData('Roundups',obj);
+return 'Saved';
+}
+
+function getglobalFilter(){
+var GF = base.getData('globalFilter/1');
+if(GF){
+return [GF,'globalFilter'];
+
+}else{
+ return  [{months:0},'globalFilter'];
+}
+ 
+}
+
+function updateglobalFilter(obj){
+obj.id= '1';
+base.updateData('globalFilter/1',obj);
 return 'Saved';
 }
