@@ -140,11 +140,10 @@ function saveFileCsv(data, name) {
     try {
       var msg = '';
   
-// 
-//      var contentType = data.substring(5, data.indexOf(','));
-//      var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.substr(data.indexOf('base64,') + 7)), contentType, name);
-//      
-var fileBlob = DriveApp.getFolderById('1SkqibZGBnGupAf2KlMbWqs8FvHKgoQgO').getFilesByName('testupload.csv').next().getBlob();
+ 
+      var contentType = data.substring(5, data.indexOf(','));
+      var fileBlob = Utilities.newBlob(Utilities.base64Decode(data.substr(data.indexOf('base64,') + 7)), contentType, name);
+      
       var values = [];
       
       var rows = fileBlob.getDataAsString().replace(/\t/g,'');

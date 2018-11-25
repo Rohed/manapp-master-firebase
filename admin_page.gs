@@ -1039,15 +1039,15 @@ function TESTSEARCHFOR() {
 //
 //    }
 //    searcharr.push(['Shipping', params]);
-var oderdatestart = base.getData("globalFilter/1");
 
-
-
-    searcharr.push(['Orders', params]);
     var params = {
         orderBy: 'final_status',
-        equalTo: "Completed",
+        equalTo: "all",
 
+    }
+        var params = {
+        orderBy: 'CompletionDate',
+       startAt: new Date().getTime()-(60*60*1000*24*2),
     }
     searcharr.push(['Orders', params]);
 
@@ -1065,7 +1065,11 @@ function searchFor(searchARR) {
             startAt: new Date().getTime()-(oderdatestart.months*60*60*1000*24*31),
             
           }
+        if( searchARR[0][1].equalTo == 'all'){
+         searchARR[0] = [searchARR[0][0],params] ;
+        }else{
         searchARR.push([searchARR[0][0],params]);
+        }
         }
       }
     }
@@ -1076,6 +1080,7 @@ function searchFor(searchARR) {
 
     }
     var rett = searched[0];
+
 
     for (var i = 1; i < searched.length; i++) {
         if (searchARR[i][1].orderBy == searchARR[i - 1][1].orderBy) {

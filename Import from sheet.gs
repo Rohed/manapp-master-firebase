@@ -1465,7 +1465,13 @@ function importInventoryData(id) {
                     break;
                 }
             }
+           if(exists){
             LOGDATA.msg += saveItem(obj) + '\n';
+            
+            }else{
+             LOGDATA.msg += obj.sku +' - '+obj.desc+' Doesnt Exist \n';
+            
+            }
         }
         logItem(LOGDATA);
         return LOGDATA.msg;

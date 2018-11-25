@@ -47,7 +47,7 @@ function saveSchedule(dataPaginated, obj) {
       'obj':JSON.stringify(obj),
     };
 
-  
+
     var params={
       method:"POST",
       "Content-Type":'application/json',

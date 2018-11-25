@@ -1152,10 +1152,9 @@ function createCompletedExport(H,name){
  
 var TOTALS_FINAL = [[],[],[],[],[],[],[]];
 for(var s =0;s<sheets.length;s++){
-     var params = {
-        orderBy: 'final_status',
-        equalTo: "Completed",
-
+     var paramsDate = {
+        orderBy: 'CompletionDate',
+       startAt: new Date().getTime()-(60*60*1000*24),
     }
     var params={};
     switch (sheets[s]){
@@ -1164,6 +1163,10 @@ for(var s =0;s<sheets.length;s++){
           orderBy: 'shipping_status',
           equalTo: "Shipped",
           
+        }
+        paramsDate = {
+          orderBy: 'CompletionDate',
+          startAt: new Date().getTime()-(60*60*1000*24),
         }
         break;
       case 'Production':
@@ -1190,7 +1193,7 @@ for(var s =0;s<sheets.length;s++){
         }
         break;
     }
-     var list=searchFor([[sheets[s], params]])[1];
+     var list=searchFor([[sheets[s], params],[sheets[s], paramsDate]])[1];
        var data =[];
        for(var i =0;i<list.length;i++){
         
