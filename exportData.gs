@@ -1103,7 +1103,7 @@ function createCompletedExport(H,name){
   var folder=DriveApp.getFolderById(COMPLETED_ITEMS_FOLDER);
   var create=DriveApp.getFileById(COMPLETED_FILE_ID).makeCopy(name,folder);
   var SS=SpreadsheetApp.openById(create.getId());
-  
+ 
   var range = [];
   if(H <= 15){
     range = [1,15];
@@ -1164,10 +1164,7 @@ for(var s =0;s<sheets.length;s++){
           equalTo: "Shipped",
           
         }
-        paramsDate = {
-          orderBy: 'CompletionDate',
-          startAt: new Date().getTime()-(60*60*1000*24),
-        }
+    
         break;
       case 'Production':
         params = {
@@ -1193,7 +1190,8 @@ for(var s =0;s<sheets.length;s++){
         }
         break;
     }
-     var list=searchFor([[sheets[s], params],[sheets[s], paramsDate]])[1];
+     var list=JSONtoARR(base.getData(sheets[s], paramsDate)).filter(function(item){
+     return item[params.orderBy]==params.equalTo});
        var data =[];
        for(var i =0;i<list.length;i++){
         
@@ -1616,6 +1614,8 @@ for(var s =0;s<sheets.length;s++){
   if(max>0){
   SS.getSheets()[0].getRange(4, 1, max, 14).setValues(sumArr);
   }
+  
+  Logger.log(SS.getUrl());
  return SS;
   
 }    

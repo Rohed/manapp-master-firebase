@@ -1056,6 +1056,9 @@ function TESTSEARCHFOR() {
 }
 
 function searchFor(searchARR) {
+if(searchARR[0][0] =='Reporting'|| searchARR[0][0] == 'Finctions'){
+return [,]
+}
     var oderdatestart = base.getData("globalFilter/1");
     if(oderdatestart){
       if(oderdatestart.months){
@@ -1444,6 +1447,8 @@ function getOrderIDs(flag) {
     }
     return ret;
 }
+
+
 function uniq2(a) {
     var prims = {
             "boolean": {},

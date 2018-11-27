@@ -1,3 +1,29 @@
+function correctCompletionDate(){
+  var sheets=[ 'Orders'];
+  var sheets=['Production' ];
+  var sheets=[ 'Printing' ];
+  var sheets=[ 'Labelling' ];
+  var sheets=[ 'Packaging' ];
+  var sheets=[ 'Shipping'];
+  sheets.map(function(item){
+  var data =base.getData(item)
+  var keys = Object.keys(data);
+  keys.map(function(batch){
+    if(data[batch].CompletionDate){
+      if(isNaN(data[batch].CompletionDate)){
+      var date = data[batch].CompletionDate.split('-');
+      data[batch].CompletionDate = new Date(date[2],date[1],date[0]).getTime();
+      
+      }
+    }
+  
+  })
+    base.updateData(item,data)
+  });
+  
+  
+}
+
 function updateInvKeys(){
 var inv=base.getData('Inventory');
 var invlist=JSONtoARR(inv);

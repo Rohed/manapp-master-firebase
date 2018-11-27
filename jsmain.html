@@ -358,6 +358,9 @@ $('.tabs .tab-links a').on('click', function(e) {
     } else if (current == '#tab11') {
    
         selPage='Finctions';
+    } else if (current == '#tab12') {
+       google.script.run.withSuccessHandler(setupReporting).getReportingData();  
+        selPage='Reporting';
     }
   hideDiv();
       google.script.run.withSuccessHandler(logSuccess).logUser(selPage,app);  
@@ -6631,4 +6634,97 @@ console.log('obj',obj);
 google.script.run.withSuccessHandler(refreshOrdersMSG).updateglobalFilter(obj);
 
 }
+
+
+//REPORTING
+
+function setupReporting(list){
+
+//console.log(list);
+var html='';
+for(var i=0;i<list.length;i++){
+html+='<option value="'+list[i]+'">'+list[i]+'</option>';
+}
+//console.log(html);
+$('#OrderIds1').html(html);
+$('#OrderIds2').html('');
+
+}
+function generateReport(event){
+var reportType = $(event).attr('reportType');
+var name = $(event).attr('name');
+var arr = [];
+var myOpts = document.getElementById('OrderIds2').options;
+for(var i=0;i<myOpts.length;i++){
+arr.push(myOpts[i].value);
+}
+if(arr.length==0){
+arr =['all'];
+}
+
+var date1=$("#startSearchReporting").val();
+var date2=$("#startSearchReporting").val();
+if(!date1 && !date2){
+date1='all';
+}else if(!date1 && date2){
+date1=0;
+}else if(date1 && !date2){
+date2=new Date().getTime();
+}
+
+if(date1 && date1!='all'){
+date1= new Date(date1).getTime();
+}
+
+if(date2){
+date2= new Date(date2).getTime();
+}else{
+date2= new Date().getTime();
+}
+var data={
+orderIDs:arr,
+shippingdates:[date1,date2]
+}
+ $("#updating").css("display", "block");
+ console.log(data);
+  google.script.run.withSuccessHandler(showReport).createOrdersReport(data,name,reportType)
+}
+
+function showReport(obj){
+$("#updating").css("display", "none");
+$("#reportLink").html('<a href="'+obj.url+'" target="_blank">'+obj.name+'</a>')
+}
+
+  $('.leftSwitch').click(function () {
+  var type1 = $(this).attr('type1');
+  var type2 = $(this).attr('type2');
+ 
+  moveItems(type2,type1);
+ 
+  });
+  
+  $('.rightSwitch').on('click', function () {
+  var type1 = $(this).attr('type1');
+  var type2 = $(this).attr('type2');
+  
+  moveItems(type1,type2);
+ 
+  });
+  
+  $('.leftallSwitch').on('click', function () {
+  var type1 = $(this).attr('type1');
+  var type2 = $(this).attr('type2');
+  
+  moveAllItems(type2,type1);
+ 
+  });
+  
+  $('.rightallSwitch').on('click', function () {
+  var type1 = $(this).attr('type1');
+  var type2 = $(this).attr('type2');
+  
+  moveAllItems(type1,type2);
+ 
+  });
+
 </script>

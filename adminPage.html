@@ -41,6 +41,7 @@
       <li><a href="#tab9">QTY</a></li>
       <li><a href="#tab10">Inventory</a></li>
       <li><a href="#tab11">Functions</a></li>
+      <li><a href="#tab12">Reporting</a></li>
    </ul>
    <ul class="tab-links" id='ordersSubTab'>
       <li id='subTabFlavourMixOrders'><a href="#tab1" sub='subOrder' page='FlavourMixOrders'>Flavour Mix Orders</a></li>
@@ -669,7 +670,64 @@
             </table>
          </div>
       </div>
-     
+      <div id="tab12" class="tab">
+         <nav class="navbar navbar-default" role="navigation">
+            <ul class="nav navbar-nav navbar">
+               <li class="nav-item">
+                  <h2>Reporting - V1.0</h2>
+               </li>
+            </ul>
+         </nav>
+         <div id='Reporting'>
+             <div class='container'>
+               <div>
+                <p>Select Order IDs</p>
+                <div class="form-group">
+                    <select id="OrderIds1" class="form-control" multiple="multiple">
+
+                    </select>
+                </div>
+                <br />
+                <button type="button" class="leftSwitch" id="leftSwitch" type1='#OrderIds1' type2='#OrderIds2'><i class="fa fa-caret-up" aria-hidden="true"></i></button>
+                <button type="button" class="rightSwitch" id="rightSwitch" type1='#OrderIds1' type2='#OrderIds2'><i class="fa fa-caret-down" aria-hidden="true"></i></button>
+                <button type="button" class="leftallSwitch" id="leftallSwitch" type1='#OrderIds1' type2='#OrderIds2'><i class="fa fa-caret-square-o-up" aria-hidden="true"></i></button>
+                <button type="button" class="rightallSwitch" id="rightallSwitch" type1='#OrderIds1' type2='#OrderIds2'><i class="fa fa-caret-square-o-down" aria-hidden="true"></i></button>
+                <br />
+                <label for="OrderIds2">Selected</label>
+                <div class="form-group">
+                    <select id="OrderIds2" class="form-control" multiple="multiple">
+
+                    </select>
+                </div>
+
+            </div>
+             </div>
+        
+             <div class='container'>
+                  <p>Delivery Date (Used for Shipping Report/Summary)</p>
+                  <div class='searchDates' id='searchDatesReporting'>
+                     <div class='startSearch'>
+                        From:
+                        <input type="date" class="form-control" id="startSearchReporting" placeholder='All' value='All' />
+                     </div>
+                     <div class='startSearch'>
+                        To:
+                        <input type="date" class="form-control" id="endSearchReporting" placeholder='All' value='All'  />
+                     </div>
+             
+             </div>
+             </div>
+             <div class='container flex'>
+               <button class="btn btn-info btn-lg" type="button"  name='Orders Report' reportType='orders' onclick="generateReport(this)">Orders Report</button>
+               <button class="btn btn-info btn-lg" type="button"  name='Shipping Report' reportType='shipping' onclick="generateReport(this)">Shipping Report</button>
+               <button class="btn btn-info btn-lg" type="button"  name='Shipping Summary' reportType='shippingsummary' onclick="generateReport(this)">Shipping Summary</button>
+             </div>
+               <div class='container flex'>
+              <h4 id='reportLink'></h4>
+             </div>
+         </div>
+          
+      </div>
    </div>
 </div>
 
