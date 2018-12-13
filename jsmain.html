@@ -1177,6 +1177,7 @@ edit_flavour_mix_order=true;
       }
       
       
+      
     function menuClick(event) {
         var href = event.getAttribute('href');
         var extra = event.getAttribute('page');
@@ -1228,6 +1229,8 @@ edit_flavour_mix_order=true;
         } else if (href.substr(0, 8) == '#editQTY') {
         console.log(extra);
             editQTY(href.substr(8, href.length),extra);
+        }else if (href.substr(0,9) == '#printSKU'){
+          generateSafetyReportsSingle(href.substr(9, href.length));
         }
 
         return false;
@@ -2454,8 +2457,12 @@ $('#rowsTotal'+thisPage).html(rowsTotal);
             html += '<td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
 
             if(page=='BrandedTypes'||page=='UnbrandedTypes'||page=='PremixesTypes'||page=='Packages'||page=='Labels'||page=='Boxes'||page=='Flavours'||page=='BottleTypes'||page=='Lids'||page=='Color'){
-            html += '<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal4" page="'+page+'" href="#editQTY' + data[i].sku + '">Edit</a></div></div></td>';
-            
+            html += '<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal4" page="'+page+'" href="#editQTY' + data[i].sku + '">Edit</a>';
+            if(page=='PremixesTypes'){
+              html += '<a class="dropdown-item" onclick="return menuClick(this);"page="'+page+'" href="#printSKU' + data[i].sku + '">Print</a></div></div></td>';
+            }else{
+              html +='</div></div></td>';
+            }
             }else{
             html += '<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal4" page="'+page+'" href="#editQTY' + data[i].name + '">Edit</a></div></div></td>';
             
@@ -5473,6 +5480,12 @@ switch (type){
     case 'globalFilter':
     built= buildglobalFilter(data);
     break;
+    case 'htmlMSG':
+    built= buildHtmlMsg(data);
+    break;
+    case 'premixSafety':
+    built= buildPremixSelector(data);
+    break;
   default:
 
   break;
@@ -6696,6 +6709,7 @@ $("#reportLink").html('<a href="'+obj.url+'" target="_blank">'+obj.name+'</a>')
 }
 
   $('.leftSwitch').click(function () {
+  console.log('clicked left1');
   var type1 = $(this).attr('type1');
   var type2 = $(this).attr('type2');
  
@@ -6704,6 +6718,7 @@ $("#reportLink").html('<a href="'+obj.url+'" target="_blank">'+obj.name+'</a>')
   });
   
   $('.rightSwitch').on('click', function () {
+  console.log('clicked right1');
   var type1 = $(this).attr('type1');
   var type2 = $(this).attr('type2');
   
@@ -6726,5 +6741,108 @@ $("#reportLink").html('<a href="'+obj.url+'" target="_blank">'+obj.name+'</a>')
   moveAllItems(type1,type2);
  
   });
+function left(event){
 
+  var type1 = $(event).attr('type1');
+  var type2 = $(event).attr('type2');
+ 
+  moveItems(type2,type1);
+ 
+
+}
+
+function right(event){
+
+  var type1 = $(event).attr('type1');
+  var type2 = $(event).attr('type2');
+ 
+  moveItems(type1,type2);
+ 
+
+}
+function leftAll(event){
+  var type1 = $(event).attr('type1');
+  var type2 = $(event).attr('type2');
+  
+  moveAllItems(type2,type1);
+ 
+
+}
+function rightAll(event){
+  var type1 = $(event).attr('type1');
+  var type2 = $(event).attr('type2');
+  
+  moveAllItems(type1,type2);
+
+}
+//SAFETY REPORTS
+
+function getpremixReports(){
+google.script.run.withSuccessHandler(buildhtmlmodal).getPremixDropdown();
+
+};
+function setupSafetyRepors(list){
+
+//console.log(list);
+var html='';
+for(var i=0;i<list.length;i++){
+html+='<option value="'+list[i].sku+'">'+list[i].sku+' - '+list[i].name+'</option>';
+}
+return html;
+}
+function buildPremixSelector(list){
+var html = '';
+html+='<div class="container">\
+<div>\
+<p>Select Premix Codes</p>\
+<div class="form-group">\
+<select id="dd1" class="form-control" multiple="multiple">\
+'+setupSafetyRepors(list)+'\
+</select>\
+</div>\
+<br />\
+<button type="button" class="leftSwitch" onclick="left(this)" id="leftSwitch" type1="#dd1" type2="#dd2"><i class="fa fa-caret-up" aria-hidden="true"></i></button>\
+<button type="button" class="rightSwitch" id="rightSwitch" onclick="right(this)" type1="#dd1" type2="#dd2"><i class="fa fa-caret-down" aria-hidden="true"></i></button>\
+<button type="button" class="leftallSwitch" id="leftallSwitch" onclick="leftAll(this)" type1="#dd1" type2="#dd2"><i class="fa fa-caret-square-o-up" aria-hidden="true"></i></button>\
+<button type="button" class="rightallSwitch" id="rightallSwitch" onclick="rightAll(this)" type1="#dd1" type2="#dd2"><i class="fa fa-caret-square-o-down" aria-hidden="true"></i></button>\
+<br />\
+<label for="dd2">Selected</label>\
+<div class="form-group">\
+<select id="dd2" class="form-control" multiple="multiple">\
+</select>\
+</div>\
+</div>\
+<button type="button" class="btn btn-success sarButton" onclick="generateSafetyReports()">Generate</button>';
+return html;
+}
+function generateSafetyReports(){
+
+var arr = [];
+var myOpts = document.getElementById('dd2').options;
+for(var i=0;i<myOpts.length;i++){
+arr.push(myOpts[i].value);
+}
+
+
+
+$("#updating").css("display", "block");
+
+google.script.run.withSuccessHandler(htmlModalMSG).printSafetyReports(arr);
+}
+function generateSafetyReportsSingle(sku){
+
+$("#updating").css("display", "block");
+
+google.script.run.withSuccessHandler(htmlModalMSG).printSafetyReports([sku]);
+}
+
+function htmlModalMSG(msg){
+buildhtmlmodal([msg,'htmlMSG'])
+  
+}
+function buildHtmlMsg(msg){
+var html='<div  class="container">'+msg+'</div>';
+
+return html;
+}
 </script>

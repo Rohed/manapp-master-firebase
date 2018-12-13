@@ -1,3 +1,8 @@
+function getPremixDropdown(){
+var data = JSONtoARR(base.getData('PremixesTypes'));
+
+return [data,'premixSafety'];
+}
 function getFormData() {
     var PD = getProductDescriptions();
     var PC = getProductCodes();

@@ -1,4 +1,57 @@
+function printSafetyReports(SELECTED){
+ 
+  var formattedDate = Utilities.formatDate(new Date(), "GMT", "yyyy-MM-dd");
+  var folder=DriveApp.getFolderById(SAFETYREPORTS.folder);
+  var PC = JSONtoARR(base.getData('References/ProductCodes'));
+  var premixes = base.getData('PremixesTypes');
+  var used = findTemplates(SELECTED,PC);
+  var notFoundMSG = '';
+    for(var i=0;i<SELECTED.length;i++){
+    
+    var data=premixes[SELECTED[i]];
+    if(used[i] === false){notFoundMSG+='<br> '+SELECTED[i]; continue;}
+    if(!data){notFoundMSG+='<br> '+SELECTED[i]; continue;}
+    if(!SAFETYREPORTS[used[i]]){notFoundMSG+='<br> '+SELECTED[i]; continue;}
+    
+    
+    var create=DriveApp.getFileById(SAFETYREPORTS[used[i]]).makeCopy(SELECTED[i]+' '+formattedDate+' Safety Report',folder);
+    var file=DocumentApp.openById(create.getId());
+    file.replaceText('<<NAME>>',data.name);
+    file.replaceText('<<SKU>>',data.sku);
+    file.getHeader().replaceText('<<NAME>>',data.name);
+    file.getHeader().replaceText('<<SKU>>',data.sku);
+   
+  }
+  
+  var ret = 'Safety Reports generated in the Folder:<br> <a  target="_blank" href="'+folder.getUrl()+'">'+folder.getName()+'</a>';
+  if(notFoundMSG){
+  ret+='<br> COULD NOT PRINT THESE ITEMS DUE TO A MISSING RECIPE OR TYPE OF TEMPLATE:'+notFoundMSG;
+  }
+  return ret;
+}
 
+function findTemplates(SELECTED,PC){
+  var arr = [];
+  for(var i = 0 ; i < SELECTED.length; i++){
+    var found = false;
+    
+    for(var j = 0 ; j < PC.length; j++){
+      
+      if(PC[j].premixSKU == SELECTED[i] || PC[j].premixSKUColored == SELECTED[i]){
+        found = true;
+        arr.push(PC[j].recipe.strength || base.getData('Recipes/'+PC[j].recipe.id+'/strength'))
+        break;
+      }
+
+    }
+    
+    if(!found){
+      arr.push(false);
+    }
+  }
+  
+  return arr;
+}
 function printProductionBatches(SELECTED) {
   Logger.log(SELECTED);
   

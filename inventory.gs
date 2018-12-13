@@ -155,7 +155,7 @@ function getInventoryData() {
 
         }
         retArr.sort(function(a, b) {
-            return (a.row) - (b.row)
+            return (a.row ? a.row : 0 ) - (b.row ? b.row : 0)
         });
         return retArr;
     } else {
