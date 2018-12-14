@@ -4,7 +4,7 @@ function printSafetyReports(SELECTED){
   var folder=DriveApp.getFolderById(SAFETYREPORTS.folder);
   var PC = JSONtoARR(base.getData('References/ProductCodes'));
   var premixes = base.getData('PremixesTypes');
-  var used = findTemplates(SELECTED,PC);
+  var used = findTemplates(SELECTED,PC,premixes);
   var notFoundMSG = '';
     for(var i=0;i<SELECTED.length;i++){
     
@@ -30,18 +30,21 @@ function printSafetyReports(SELECTED){
   return ret;
 }
 
-function findTemplates(SELECTED,PC){
+function findTemplates(SELECTED,PC,premixes){
   var arr = [];
   for(var i = 0 ; i < SELECTED.length; i++){
     var found = false;
-    
+    if(premixes[SELECTED[i]].name.toLowerCase().match('cbd')){
+       arr.push('0');
+       continue;
+    }
     for(var j = 0 ; j < PC.length; j++){
       
       if(PC[j].premixSKU == SELECTED[i] || PC[j].premixSKUColored == SELECTED[i]){
         found = true;
         arr.push(PC[j].recipe.strength || base.getData('Recipes/'+PC[j].recipe.id+'/strength'))
         break;
-      }
+      } 
 
     }
     
