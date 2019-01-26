@@ -1,3 +1,18 @@
+function Testsaveitem(){
+var data = {
+delivdate: "2018-10-19",
+desc: "Chocolate Ice Cream",
+eta: "9",
+key: "undefined",
+note: "somenote",
+orderdate: "2018-10-19",
+page: "Flavours",
+paiddate: "2018-10-19",
+quantity: 12,
+sku: "FLAV2203C",
+}
+saveItem(data)
+}
 function saveItem(data) {
 
 
@@ -32,7 +47,7 @@ function saveItem(data) {
         QTYitem.Stock = 0;
       }
        QTYitem.Running = QTYitem.Running? QTYitem.Running: 0;
-        if(data.key != 'undefined' && data.key != undefined){
+        if(data.key != 'undefined'){
          var olddat=base.getData('Inventory/' + data.key);
            if (data.delivdate&& (olddat.quantity!=data.quantity)) {
                 LOGDATA.data.push(['Added to Stock:', data.quantity]);
@@ -89,9 +104,13 @@ function saveItem(data) {
                 for (var i = 0; i < result.length; i++) {
                     Rows.push(result[i][1].row);
                 }
+              if(Rows.length>0){
                 var max = Rows.reduce(function(a, b) {
-                    return Math.max(a, b);
+                  return Math.max(a, b);
                 });
+              }else{
+               var max = 0;
+              }
             } else {
                 var max = 0;
             }
@@ -155,7 +174,7 @@ function getInventoryData() {
 
         }
         retArr.sort(function(a, b) {
-            return (a.row ? a.row : 0 ) - (b.row ? b.row : 0)
+            return (a.row) - (b.row)
         });
         return retArr;
     } else {

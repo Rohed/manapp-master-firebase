@@ -25,7 +25,7 @@ function saveItemSL(obj, sheet) {
     if (obj.Completed == 'Completed') {
         obj.CompletionDate = new Date().getTime();
         obj.prodDate = new Date().getTime();
-        obj.movedtoNext = 1;
+        
         base.updateData(sheet + '/' + obj.batch, obj);
         LOGDATA.data.push(['Marked Completed:', obj.batch]);
         logItem(LOGDATA);
@@ -39,7 +39,7 @@ function saveItemSL(obj, sheet) {
         logItem(LOGDATA);
         obj.CompletionDate = new Date().getTime();
         obj.prodDate = new Date().getTime();
-        obj.movedtoNext = 1;
+        
         base.updateData(sheet + '/' + obj.batch, obj);
 
         var rez = MoveItem(obj.batch, sheet);
@@ -118,7 +118,7 @@ function runBusy(batch, page) {
         var order = base.getData('Orders/' + batch);
 
         var dat = {
-            movedtoNext: "Busy",
+            final_status: "Busy",
             starttime: (new Date()).getTime(),
         };
         base.updateData(page + '/' + batch, dat);
@@ -129,11 +129,11 @@ function runBusy(batch, page) {
             for (var i = 0; i < batches.length; i++) {
                 var dat1 = {
                     starttime: (new Date()).getTime(),
-                    movedtoNext: "Busy"
+                    final_status: "Busy"
 
                 };
                 var dat2 = {
-                    mixing_status: "Busy"
+                    final_status: "Busy"
                 };
                 base.updateData('Mixing/' + batches[i].batch, dat1);
                 base.updateData('Orders/' + batches[i].batch, dat2);
@@ -151,7 +151,7 @@ function runBusy(batch, page) {
                 var year = d.getFullYear();
                 var month = d.getMonth();
                 var day = d.getDate() + 1;
-                data.expDate = Utilities.formatDate(new Date(year + 2, month, day), "GMT", "dd-MM-yyyy");
+                data.expDate =  new Date(year + 2, month, day).getTime();
 
                 data.printing_status = "Busy"
                 order.printing_status = "Busy"
@@ -226,10 +226,14 @@ function overProd(batch, newBottles, sheet) {
                 sku: '',
                 name: '',
             },
+            boxname: {
+                sku: '',
+                name: '',
+            },
             orderID: ''
         };
         object.recipe = data.recipe;
-        object.final_status = 'started';
+        object.final_status = 'Busy';
         LOGDATA.data.push(['New Order:', data.batch + "OV"]);
         saveOrder(object);
         fromRunningtoReserved('Lids/' + data.lidSKU, newBottles - data.bottles);

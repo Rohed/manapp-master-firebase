@@ -255,55 +255,44 @@ google.script.run.withSuccessHandler(logSuccess).logUser(selPage, app);
 filterpage('xx', true);
 
 $('.tabs .tab-links a').on('click', function(e) {
-     $("#subTabFlavourMixOrders").removeClass('active');
-     $('.content').html('');
-     $('.modal-body').html('');
-     var subtab=$(this).attr('sub');
-     pagesSplit=false;
-     $("#scheduleOptions").hide();
-     if(subtab=='sub'){
-        
-     
-     $(this).parent('li').addClass('active').siblings().removeClass('active');
-     
-     if($(this).attr('id')=='scheduled'){
-     $("#scheduleOptions").show();
-     
-     google.script.run.withSuccessHandler(setScheduleDropdown).getScheduleDropdown();   
-     
-     
-     }else{
-     
-     var param=$(this).attr('param');
-     BASEPARAM.equalTo=param;
-     filterpage('xx',true);
-     
-     
-     }
-     }else if(subtab=='subOrder'){
-    
-     var page=$(this).attr('page');
-     thisPage=page;
-     selPage=page;
-     filterpage('xx',true);
-     $("#subTabFlavourMixOrders").addClass('active');
-     }else{
-     
-     var currentAttrValue = $(this).attr('href');
-     
-     // Show/Hide Tabs
-     $('.tabs ' + currentAttrValue).show().siblings().hide();
-     $(this).parent('li').addClass('active').siblings().removeClass('active');
-     
-     populateSheet(currentAttrValue);
-     // Change/remove current tab to active
-     
-     }
-     hideDiv();
-     e.preventDefault();
-     e.stopPropagation();
-     
-     });
+    $("#subTabFlavourMixOrders").removeClass('active');
+    $('.content').html('');
+    $('.modal-body').html('');
+    var subtab = $(this).attr('sub');
+    pagesSplit = false;
+    $("#scheduleOptions").hide();
+    console.log('h1');
+    if (subtab == 'sub') {
+        console.log('h2');
+        $(this).parent('li').addClass('active').siblings().removeClass('active');
+        if ($(this).attr('id') == 'scheduled') {
+            console.log('h3');
+            $("#scheduleOptions").show();
+            google.script.run.withSuccessHandler(setScheduleDropdown).getScheduleDropdown();
+        } else {
+            console.log('h4');
+            var param = $(this).attr('param');
+            BASEPARAM.equalTo=param;
+            filterpage('xx', true);
+        }
+    } else if (subtab == 'subOrder') {
+        var page = $(this).attr('page');
+        thisPage = page;
+        selPage = page;
+        filterpage('xx', true);
+        $("#subTabFlavourMixOrders").addClass('active');
+    } else {
+        var currentAttrValue = $(this).attr('href');
+        // Show/Hide Tabs
+        $('.tabs ' + currentAttrValue).show().siblings().hide();
+        $(this).parent('li').addClass('active').siblings().removeClass('active');
+        populateSheet(currentAttrValue);
+        // Change/remove current tab to active
+    }
+    hideDiv();
+    e.preventDefault();
+    e.stopPropagation();
+});
     
     var activetab='#tab1';
     function populateSheet(current) {
@@ -357,10 +346,7 @@ $('.tabs .tab-links a').on('click', function(e) {
         selPage='Inventory';
     } else if (current == '#tab11') {
    
-        selPage='Finctions';
-    } else if (current == '#tab12') {
-       google.script.run.withSuccessHandler(setupReporting).getReportingData();  
-        selPage='Reporting';
+        selPage='Functions';
     }
   hideDiv();
       google.script.run.withSuccessHandler(logSuccess).logUser(selPage,app);  
@@ -399,7 +385,7 @@ $('.tabs .tab-links a').on('click', function(e) {
     //Tabs
     var MixSheet="#Mixing";
     $('.tabs3 .tab-links3 a').on('click', function(e) {
-
+        console.log('BASEPARAM',BASEPARAM);
         var currentAttrValue3 = $(this).attr('href');
         MixSheet=currentAttrValue3;
         // Show/Hide Tabs
@@ -765,8 +751,12 @@ edit_flavour_mix_order=true;
       function formatDateDisplay(datems){
      try{
      if(datems&&datems!=""){
-      var now=new Date(datems);
-      
+       var num = parseInt(datems,10);
+       if(num<5000){
+       var now=new Date(datems);
+       }else{
+       var now=new Date(num);
+       }
       
       var day = ("0" + now.getDate()).slice(-2);
       var month = ("0" + (now.getMonth() + 1)).slice(-2);
@@ -863,7 +853,7 @@ edit_flavour_mix_order=true;
             html +='<tr bgcolor="#FFC200" >';
             }else if(data[i].final_status=='Completed'){
             html +='<tr bgcolor="#1BEF5B">';
-            }else if(data[i].final_status=='started'){
+            }else if(data[i].final_status=='Busy'){
             html +='<tr bgcolor="#1BCFEF">';
             }else{
             html +='<tr>';
@@ -924,7 +914,7 @@ edit_flavour_mix_order=true;
         html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal'+thisPage+'"></div></th><th><div>STOCKING TOTAL</div><div id="stockingTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th><div>QTY TOTAL</div><div id="qtyTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th></th>';
         html += '<th></th><th></th><th></th><th></th><th><div>MIXING TOTAL</div><div id="mixingTotal'+thisPage+'"></div></th><th><div>PREMIX TOTAL</div><div id="premixTotal'+thisPage+'"></div></th><th><div>UNBRANDED TOTAL</div><div id="unbrandedTotal'+thisPage+'"></div></th><th><div>BRANDED TOTAL</div><div id="brandedTotal'+thisPage+'"></div></th><th><div>TUBES TOTAL</div><div id="tubesTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><tr>';
       if(data){
-        var keys=['orderdate','runtime','machineP','machineL','batch','orderID','productcode','productdescription','priority','customer','brand','recipe.name','flavour.name','bottles','stocking','btype','lid','packagingType.name','QTY','flavvalue','VGval','AGval','PGval','Nico','Nicosalts','CBDvalue','MCTval','mixing','premixed',
+        var keys=['orderdate','starttime','machineP','machineL','batch','orderID','productcode','productdescription','priority','customer','brand','recipe.name','flavour.name','bottles','stocking','btype','lid','packagingType.name','QTY','flavvalue','VGval','AGval','PGval','Nico','Nicosalts','CBDvalue','MCTval','mixing','premixed',
             'unbranded','branded','backtubed','mixing_status','production_status','printing_status','labeling_status','packaging_status','final_status','partialProduction','partialPackaging'];
        var drpdowns='';
         html += '<tr><th></th><th></th><th></th>';
@@ -954,30 +944,15 @@ edit_flavour_mix_order=true;
          html +='<tr bgcolor="#FFC200" >';
         }else if(data[i].final_status=='Completed'){
          html +='<tr bgcolor="#1BEF5B">';
-        }else if(data[i].final_status=='started'){
+        }else if(data[i].final_status=='Busy'){
          html +='<tr bgcolor="#1BCFEF">';
         }else{
          html +='<tr>';
         }
         
-         if(!data[i].numLabelsBottles){
-         data[i].numLabelsBottles=0;
-         }
-         if(!data[i].numLabelsTubes){
-         data[i].numLabelsTubes=0;
-         }
-         if(!data[i].packagingType){
-         data[i].packagingType={
-         name:0,
-         };
-         }
-         if(!data[i].boxname){
-         data[i].boxname={
-         name:0,
-         };
-         }
+       
             html += '<td>'+i+'</td><td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-           // if (data[i].final_status == 'started' || data[i].final_status == 'Completed') {
+           // if (data[i].final_status == 'Busy' || data[i].final_status == 'Completed') {
               //  html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deleteOrder' + data[i].batch + '">Delete Batch</a>';
           //  } else {
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal" href="#editOrder' + data[i].batch + '">Edit</a>';
@@ -993,8 +968,8 @@ edit_flavour_mix_order=true;
 
             html += ' </div></div></td>';  
             html += '<td><button page="Orders" batch="'+data[i].batch+'" onclick="moveUp(this)" id="moveUP"><i class="fa fa-arrow-up" aria-hidden="true"></i></button><button onclick="moveDown(this)" page="Orders" batch="'+data[i].batch+'" id="moveDOWN"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>';
-            data[i].runtime=data[i].runtime ? data[i].runtime: ' ';
-            html += '<td>' + formatDateDisplay(data[i].orderdate) + '</td><td>' + formatDateDisplay2(data[i].runtime) + '</td>';
+          
+            html += '<td>' + formatDateDisplay(data[i].orderdate) + '</td><td>' + formatDateDisplay2(data[i].starttime) + '</td>';
                   if(data[i].machineP){
             var selectedDropdown=machinesHTML;    
             selectedDropdown=selectedDropdown.replace('sku="'+data[i].machineP+'"','sku="'+data[i].machineP+'" selected');
@@ -1024,7 +999,7 @@ edit_flavour_mix_order=true;
             html += '<option factory="Halifax" value="Halifax - Auto Machine 1 - Labelling only">Halifax - Auto Machine 1 - Labelling only</option>';
             html += '<option factory="Halifax" value="Halifax - Auto Machine 2 - Labelling only">Halifax - Auto Machine 2 - Labelling only</option>';
             html += '</select></td>';
-            data[i].priority=data[i].priority ? data[i].priority: ' ';
+            data[i].priority=data[i].priority == 0 ? data[i].priority: ' ';
             data[i].flavvalue=data[i].flavvalue ? data[i].flavvalue: ' ';
             data[i].VGval=data[i].VGval ? data[i].VGval: ' ';
             data[i].AGval=data[i].AGval ? data[i].AGval: ' ';
@@ -1177,7 +1152,6 @@ edit_flavour_mix_order=true;
       }
       
       
-      
     function menuClick(event) {
         var href = event.getAttribute('href');
         var extra = event.getAttribute('page');
@@ -1229,8 +1203,6 @@ edit_flavour_mix_order=true;
         } else if (href.substr(0, 8) == '#editQTY') {
         console.log(extra);
             editQTY(href.substr(8, href.length),extra);
-        }else if (href.substr(0,9) == '#printSKU'){
-          generateSafetyReportsSingle(href.substr(9, href.length));
         }
 
         return false;
@@ -1534,9 +1506,9 @@ var EDITORDER=false;
         html+='<tbody>';
         for(var i=0;i<data.length;i++){
         if(!data[i].recipe){continue;}
-          if (data[i].movedtoNext == 0) {
+          if (data[i].final_status == 'Not Run') {
                  html+='<tr>'
-                 }else if (data[i].movedtoNext == 'Busy') {
+                 }else if (data[i].final_status == 'Busy') {
                   html+='<tr bgcolor="#1BCFEF">'
                  }else{
                   html+='<tr bgcolor="#1BEF5B">'
@@ -1546,7 +1518,7 @@ var EDITORDER=false;
           data[i].brand=data[i].brand ? data[i].brand: ' ';
         html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deleteMix' + data[i].batch + '">Delete</a>';
         html+=' </div></div></td>';
-        data[i].priority=data[i].priority ? data[i].priority: ' '; 
+        data[i].priority=data[i].priority == 0 ? data[i].priority: ' '; 
         html += '<td><button page="Mixing" batch="'+data[i].batch+'" onclick="moveUp(this)" id="moveUP"><i class="fa fa-arrow-up" aria-hidden="true"></i></button><button onclick="moveDown(this)" page="Mixing" batch="'+data[i].batch+'" id="moveDOWN"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>';
         html+='<td>'+data[i].final_status+'</td><td>'+data[i].priority+'</td><td>'+data[i].batch+'</td><td>' + data[i].orderID + '</td><td>' + data[i].brand + '</td><td>' + data[i].productcode + '</td><td>' + data[i].productdescription + '</td><td>'+data[i].recipe.name+'</td>';
       
@@ -1638,7 +1610,7 @@ var EDITORDER=false;
             html +='<tr bgcolor="#FFC200" >';
             }else if(data[i].final_status=='Completed'){
             html +='<tr bgcolor="#1BEF5B">';
-            }else if(data[i].final_status=='started'){
+            }else if(data[i].final_status=='Busy'){
             html +='<tr bgcolor="#1BCFEF">';
             }else{
             html +='<tr>';
@@ -1655,7 +1627,7 @@ var EDITORDER=false;
                 html+= '<td>'+i+'</td>';
                 }else if(keys[j]=='orderdate'){
                 html+= '<td>'+formatDateDisplay(data[i][keys[j]])+'</td>';
-                }else if(keys[j]=='CompletionDate' || keys[j]=='started'){
+                }else if(keys[j]=='CompletionDate' || keys[j]=='starttime'){
                 html+= '<td>'+formatDateDisplay2(data[i][keys[j]])+'</td>';
                 }else{
                 html+= '<td>'+data[i][keys[j]]+'</td>';
@@ -1684,7 +1656,7 @@ var EDITORDER=false;
         console.log(data);
         var html = '';
         var heads=['Row','Menu','Batch','Order Date','Started','QTY','Color','Color SKU','Color %','Mix Batch Code','Uncolored Premix Description','Uncolored Premix SKU','Colored Premix Description','Colored Premix SKU','Status','Completion Date','Notes','Location'];
-        var keys=['row','menu','batch','orderdate','starttime','QTY','Color.name','Color.sku','Color.val','mix_batch_code','premixdescr','premixSKU','premixdescrColored','premixSKUColored','final_status','CompletionDate','Notes','Location']
+        var keys=['row','menu','batch','orderdate','starttime','QTY','Color.name','Color.sku','Color.val','mixbatch','premixdescr','premixSKU','premixdescrColored','premixSKUColored','final_status','CompletionDate','Notes','Location']
         html += '<table class="table"><thead><tr>';
         for(var i=0;i<heads.length;i++){
           html+= '<th>'+heads[i]+'</th>';
@@ -1704,7 +1676,7 @@ var EDITORDER=false;
         for(var i=0;i<data.length;i++){
           if(data[i].final_status=='Completed'){
             html +='<tr bgcolor="#1BEF5B">';
-            }else if(data[i].final_status=='Busy'||data[i].final_status=='started'){
+            }else if(data[i].final_status=='Busy'){
             html +='<tr bgcolor="#1BCFEF">';
             }else{
             html +='<tr>';
@@ -1783,16 +1755,16 @@ var EDITORDER=false;
         html += '<tbody>';
         if(data!=''){
         for (var i = 0; i < data.length; i++) {
-     if (data[i].movedtoNext == 0) {
+     if (data[i].final_status == 'Not Run') {
          html+='<tr>'
-         }else if (data[i].movedtoNext == 'Busy') {
+         }else if (data[i].final_status == 'Busy') {
           html+='<tr bgcolor="#1BCFEF">'
          }else{
           html+='<tr bgcolor="#1BEF5B">'
          }
         
             html += '<td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-            if (data[i].movedtoNext == 0) {
+            if (data[i].final_status == 'Not Run') {
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#MixingMoveNext' + data[i].MIXNAME + '">Line Item Move</a>';
             }
             html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deleteMixingTeam' + data[i].MIXNAME + '">Delete</a>';
@@ -1918,31 +1890,16 @@ google.script.run.withSuccessHandler(updateMachine).changeFactory(mixbatch,facto
         if(data!=''){
         for (var i = 0; i < data.length; i++) {
           if(!data[i].recipe){continue;}
-      if (data[i].movedtoNext == 0) {
+      if (data[i].final_status == 'Not Run') {
          html+='<tr>'
-         }else if (data[i].movedtoNext == 'Busy') {
+         }else if (data[i].final_status == 'Busy') {
           html+='<tr bgcolor="#1BCFEF">'
          }else{
           html+='<tr bgcolor="#1BEF5B">'
          }
-         if(!data[i].numLabelsBottles){
-         data[i].numLabelsBottles=0;
-         }
-         if(!data[i].numLabelsTubes){
-         data[i].numLabelsTubes=0;
-         }
-         if(!data[i].packagingType){
-         data[i].packagingType={
-         name:0,
-         };
-         }
-         if(!data[i].boxname){
-         data[i].boxname={
-         name:0,
-         };
-         }
+       
             html += '<td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-            if (data[i].movedtoNext == 0) {
+            if (data[i].final_status == 'Not Run') {
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#ProductionMoveNext' + data[i].batch + '">Line Item Move</a>';
             }
             
@@ -1951,8 +1908,8 @@ google.script.run.withSuccessHandler(updateMachine).changeFactory(mixbatch,facto
             
             html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deleteProduction' + data[i].batch + '">Delete</a>';
             html += ' </div></div></td>';
-html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp(this)" id="moveUP"><i class="fa fa-arrow-up" aria-hidden="true"></i></button><button onclick="moveDown(this)" page="Production" batch="'+data[i].batch+'" id="moveDOWN"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>';
- data[i].priority=data[i].priority ? data[i].priority: ' ';
+            html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp(this)" id="moveUP"><i class="fa fa-arrow-up" aria-hidden="true"></i></button><button onclick="moveDown(this)" page="Production" batch="'+data[i].batch+'" id="moveDOWN"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>';
+             data[i].priority=data[i].priority == 0 ? data[i].priority: ' ';
             html += '<td>' + data[i].mixing_status + '</td><td>' + formatDateDisplay(data[i].orderdate) + '</td><td>' + data[i].batch + '</td><td>' + data[i].orderID + '</td><td>' + data[i].productcode + '</td><td>' + data[i].productdescription + '</td><td>' + data[i].mixbatch + '</td><td>' + data[i].priority + '</td><td>' + data[i].customer + '</td><td>' + data[i].brand + '</td><td>' + data[i].recipe.name + '</td>';
             html += '<td>' + data[i].flavour.name + '</td><td>' + data[i].bottles + '</td><td>' + data[i].btype + '</td><td>' + data[i].lid + '</td><td>' + data[i].packagingType.name + '</td><td>'+formatDateDisplay2(data[i].starttime)+'</td><td>' + formatDateDisplay2(data[i].CompletionDate) + '</td>';
              html += '<td>' + data[i].Completed + '</td><td>' + data[i].Location + '</td>';
@@ -2025,44 +1982,24 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
         if(data!=''){
         for (var i = 0; i < data.length; i++) {
           if(!data[i].recipe){continue;}
-     if (data[i].movedtoNext == 0) {
+     if (data[i].final_status == 'Not Run') {
      
          html+='<tr>'
-         }else if (data[i].movedtoNext == 'Busy') {
+         }else if (data[i].final_status == 'Busy') {
           html+='<tr bgcolor="#1BCFEF">'
          }else{
           html+='<tr bgcolor="#1BEF5B">'
          }
-         if(!data[i].numLabelsBottles){
-         data[i].numLabelsBottles=0;
-         }
-         if(!data[i].numLabelsTubes){
-         data[i].numLabelsTubes=0;
-         }
-         if(!data[i].packagingType){
-         data[i].packagingType={
-         name:0,
-         };
-         }
-         if(!data[i].boxname){
-         data[i].boxname={
-         name:0,
-         };
-         }
+     
             html += '<td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-            if (data[i].movedtoNext == 0) {
+            if (data[i].final_status == 'Not Run') {
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#PrintingMoveNext' + data[i].batch + '">Line Item Move</a>';
             }
             html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deletePrinting' + data[i].batch + '">Delete</a>';
             html += ' </div></div></td>';
             html += '<td><button page="Printing" batch="'+data[i].batch+'" onclick="moveUp(this)" id="moveUP"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>';
             html += '<button onclick="moveDown(this)" page="Printing" batch="'+data[i].batch+'" id="moveDOWN"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>';
-            if(!data[i].numLabelsBottles){
-            data[i].numLabelsBottles=0;
-            }
-            if(!data[i].numLabelsTubes){
-            data[i].numLabelsTubes=0;
-            }
+        
             html += '<td>' + data[i].production_status + '</td><td>' + formatDateDisplay(data[i].orderdate) + '</td><td>' + data[i].batch + '</td><td>' + data[i].numLabelsBottles + '</td><td>' + data[i].numLabelsTubes + '</td><td>' + data[i].expDate + '</td><td>' + data[i].orderID + '</td><td>' + data[i].productcode + '</td><td>' + data[i].productdescription + '</td><td>' + data[i].priority + '</td><td>' + data[i].customer + '</td><td>' + data[i].brand + '</td><td>' + data[i].recipe.name + '</td>';
             html += '<td>' + data[i].flavour.name + '</td><td>' + data[i].bottles + '</td><td>' + data[i].btype + '</td><td>' + data[i].lid + '</td><td>' + data[i].packagingType.name + '</td><td>' + data[i].botlabel + '</td><td>' + data[i].boxname.name + '</td><td>'+formatDateDisplay2(data[i].starttime)+'</td><td>' + formatDateDisplay2(data[i].CompletionDate) + '</td>';
             html += '<td>' + data[i].Completed + '</td><td>' + data[i].Location + '</td></tr>';
@@ -2128,31 +2065,17 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
         if(data!=''){
         for (var i = 0; i < data.length; i++) {
           if(!data[i].recipe){continue;}
-      if (data[i].movedtoNext == 0) {
+      if (data[i].final_status == 'Not Run') {
          html+='<tr>'
-         }else if (data[i].movedtoNext == 'Busy') {
+         }else if (data[i].final_status == 'Busy') {
           html+='<tr bgcolor="#1BCFEF">'
          }else{
           html+='<tr bgcolor="#1BEF5B">'
          }
-         if(!data[i].numLabelsBottles){
-         data[i].numLabelsBottles=0;
-         }
-         if(!data[i].numLabelsTubes){
-         data[i].numLabelsTubes=0;
-         }
-         if(!data[i].packagingType){
-         data[i].packagingType={
-         name:0,
-         };
-         }
-         if(!data[i].boxname){
-         data[i].boxname={
-         name:0,
-         };
-         }
+  
+       
             html += '<td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-            if (data[i].movedtoNext == 0) {
+            if (data[i].final_status == 'Not Run') {
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#LabellingMoveNext' + data[i].batch + '">Line Item Move</a>';
             }
             html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deleteLabelling' + data[i].batch + '">Delete</a>';
@@ -2160,7 +2083,7 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
             
              html += '<td><button page="Labelling" batch="'+data[i].batch+'" onclick="moveUp(this)" id="moveUP"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>';
             html += '<button onclick="moveDown(this)" page="Labelling" batch="'+data[i].batch+'" id="moveDOWN"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>';
-             data[i].priority=data[i].priority ? data[i].priority: ' ';
+             data[i].priority=data[i].priority == 0 ? data[i].priority: ' ';
             html += '<td>' + data[i].production_status + '</td><td>' +formatDateDisplay( data[i].orderdate) + '</td><td>' + data[i].batch + '</td><td>' + data[i].orderID + '</td><td>' + data[i].productcode + '</td><td>' + data[i].productdescription + '</td><td>' + data[i].priority + '</td><td>' + data[i].customer + '</td><td>' + data[i].brand + '</td><td>' + data[i].recipe.name + '</td>';
             html += '<td>' + data[i].flavour.name + '</td><td>' + data[i].bottles + '</td><td>' + data[i].btype + '</td><td>' + data[i].lid + '</td><td>' + data[i].packagingType.name + '</td><td>'+formatDateDisplay2(data[i].starttime)+'</td><td>' + formatDateDisplay2(data[i].CompletionDate) + '</td>';
             html += '<td>' + data[i].Completed + '</td><td>' + data[i].Location + '</td><td>' + data[i].machineL + '</td></tr>';
@@ -2222,31 +2145,16 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
         if(data!=''){
         for (var i = 0; i < data.length; i++) {
           if(!data[i].recipe){continue;}
-         if (data[i].movedtoNext == 0) {
+         if (data[i].final_status == 'Not Run') {
          html+='<tr>'
-         }else if (data[i].movedtoNext == 'Busy') {
+         }else if (data[i].final_status == 'Busy') {
           html+='<tr bgcolor="#1BCFEF">'
          }else{
           html+='<tr bgcolor="#1BEF5B">'
          }
-         if(!data[i].numLabelsBottles){
-         data[i].numLabelsBottles=0;
-         }
-         if(!data[i].numLabelsTubes){
-         data[i].numLabelsTubes=0;
-         }
-         if(!data[i].packagingType){
-         data[i].packagingType={
-         name:0,
-         };
-         }
-         if(!data[i].boxname){
-         data[i].boxname={
-         name:0,
-         };
-         }
+  
             html += '<td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-            if (data[i].movedtoNext == 0) {
+            if (data[i].final_status == 'Not Run') {
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#PackagingMoveNext' + data[i].batch + '">Line Item Move</a>';
             }
             html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deletePackaging' + data[i].batch + '">Delete</a>';
@@ -2313,24 +2221,9 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
         if(data!=''){
         for (var i = 0; i < data.length; i++) {
   if(!data[i].recipe){continue;}
-   if(!data[i].numLabelsBottles){
-         data[i].numLabelsBottles=0;
-         }
-         if(!data[i].numLabelsTubes){
-         data[i].numLabelsTubes=0;
-         }
-         if(!data[i].packagingType){
-         data[i].packagingType={
-         name:0,
-         };
-         }
-         if(!data[i].boxname){
-         data[i].boxname={
-         name:0,
-         };
-         }
+ 
          
-          data[i].priority=data[i].priority ? data[i].priority: ' ';
+          data[i].priority=data[i].priority == 0 ? data[i].priority: ' ';
             html += '<tr><td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
 
 
@@ -2426,8 +2319,7 @@ $('#rowsTotal'+thisPage).html(rowsTotal);
     }
 
     function populateQTYTable(data,page) {
-  
-       
+      
         var html = '';
     
         html += '<table class="table"><thead><tr><th>Row</th><th>SKU</th><th>Menu</th><th>Name</th><th>Running</th><th>Reserved</th><th>Completed</th><th>Stock on Order</th></tr></thead>';
@@ -2457,12 +2349,8 @@ $('#rowsTotal'+thisPage).html(rowsTotal);
             html += '<td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
 
             if(page=='BrandedTypes'||page=='UnbrandedTypes'||page=='PremixesTypes'||page=='Packages'||page=='Labels'||page=='Boxes'||page=='Flavours'||page=='BottleTypes'||page=='Lids'||page=='Color'){
-            html += '<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal4" page="'+page+'" href="#editQTY' + data[i].sku + '">Edit</a>';
-            if(page=='PremixesTypes'){
-              html += '<a class="dropdown-item" onclick="return menuClick(this);"page="'+page+'" href="#printSKU' + data[i].sku + '">Print</a></div></div></td>';
-            }else{
-              html +='</div></div></td>';
-            }
+            html += '<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal4" page="'+page+'" href="#editQTY' + data[i].sku + '">Edit</a></div></div></td>';
+            
             }else{
             html += '<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal4" page="'+page+'" href="#editQTY' + data[i].name + '">Edit</a></div></div></td>';
             
@@ -2500,7 +2388,7 @@ google.script.run.withSuccessHandler(buildQTYFormFromExisting).getSingleQTYData(
     function buildQTYFormFromExisting(dat) {
     var data=dat.data;
     var page=dat.page;
-  //  console.log(data);
+  
         var html = '';
         html += '<table class="form_table">';
       
@@ -2713,7 +2601,7 @@ google.script.run.withSuccessHandler(buildQTYFormFromExisting).getSingleQTYData(
     //google.script.run.withSuccessHandler(newflavourSuccess).newBasicItem(BASEflavour, 'Flavours');
     obj.flavours[flavoursku]={
     sku:flavoursku,
-    val:val,
+    val:parseFloat(val),
     name:name,
     };
     }else{
@@ -2722,7 +2610,7 @@ google.script.run.withSuccessHandler(buildQTYFormFromExisting).getSingleQTYData(
     var val=$(special+'flavourAmount'+i).val()
     obj.flavours[flavoursku]={
     sku:flavoursku,
-    val:val,
+    val:parseFloat(val),
     name:name,
     };
     
@@ -3198,18 +3086,22 @@ return ret;
 
 var pagesSplit=false;
 var lastPage='';
+ 
+var largeData;
 function filterResult(rett){
-
-console.log(rett);
+ 
+console.log('rett',rett);
 var page=rett[0];
 var data=rett[1];
+largeData=data;
+  
 data=getSearchDates(data);
 if(pagesSplit==false){
  data=splitPages([data,page]);
 
 }
 
-var largeData;
+
 lastPage=page;
 
 if(page=='Orders'){
@@ -3240,7 +3132,8 @@ $("#updating").css("display", "none");
 
 function changeSplit(){
 pagesSplit=false;
-filterpage('xx',true);
+filterResult([selPage,largeData])
+//filterpage('xx',true);
 }
  var splitPAGES;
     var currPage;
@@ -3248,8 +3141,7 @@ filterpage('xx',true);
   
     var data=rett[0];
     var page=rett[1];
-largeData=data;
-   
+ 
     currPage=page;
     
     if(data.length==0){
@@ -3959,7 +3851,7 @@ var INPDATA;
     }
 
    function buildItemFormFromExisting(retval) {
-        console.log(retval);
+   
        INPDATA = retval[0];
         var dataold = retval[1];
     
@@ -4576,7 +4468,7 @@ searchItems.push([page,params]);
 
 searchItems.push([selPage,BASEPARAM]);
 LASTSEARCH=searchItems;
-console.log(searchItems);
+console.log('searching for',searchItems);
 
  google.script.run.withSuccessHandler(filterResult).searchFor(searchItems);
 
@@ -5429,8 +5321,9 @@ if (r == true) {
 }
 return false;
 }
+
 var htmlModalType;
-var modalclosed=true;
+//var modalclosed=true;
 var loopTimeout=0;
 function buildhtmlmodal(rett){
 $('.htmlMSGmodalbody').html('');
@@ -5440,6 +5333,7 @@ var data=rett[0];
 var type=rett[1];
 htmlModalType=type;
 var built='';
+console.log('rett',rett);
 switch (type){
     case 'backupAndRestore':
     built= buildbackupAndRestore(data);
@@ -5474,27 +5368,21 @@ switch (type){
     case 'PackagePrint':
     built= buildPackagePrint(data);
     break;
-     case 'Roundups':
+    case 'Roundups':
     built= buildRoundups(data);
     break;
     case 'globalFilter':
     built= buildglobalFilter(data);
-    break;
-    case 'htmlMSG':
-    built= buildHtmlMsg(data);
-    break;
-    case 'premixSafety':
-    built= buildPremixSelector(data);
     break;
   default:
 
   break;
 }
 $('.htmlMSGmodalbody').html(built);
-modalclosed=false;
+//modalclosed=false;
 $('#htmlMSGmodal').modal('show');
-$('.modal-backdrop').show();
-$('#htmlMSGmodal').show();
+ 
+//$('#htmlMSGmodal').show();
 
 
 
@@ -5524,7 +5412,7 @@ html+='<td>'+list[i][j]+'</td>';
 
   if(list[i][j][0]=='Completed'){
   html+='<td bgcolor="#1BEF5B">';
-  }else if(list[i][j][0]=='Busy'||list[i][j][0]=='started'){
+  }else if(list[i][j][0]=='Busy'){
    html+='<td bgcolor="#1BCFEF">';
   }else{
    html+='<td>';
@@ -5561,7 +5449,7 @@ html+='<td>'+list[i][j]+'</td>';
 
   if(list[i][j][0]=='Completed'){
   html+='<td bgcolor="#1BEF5B">';
-  }else if(list[i][j][0]=='Busy'||list[i][j][0]=='started'){
+  }else if(list[i][j][0]=='Busy' ){
    html+='<td bgcolor="#1BCFEF">';
   }else{
    html+='<td>';
@@ -5599,7 +5487,7 @@ html+='<td>'+list[i][j]+'</td>';
 }else{
   if(list[i][j][0]=='Completed'){
   html+='<td bgcolor="#1BEF5B">';
-  }else if(list[i][j][0]=='Busy'||list[i][j][0]=='started'){
+  }else if(list[i][j][0]=='Busy' ){
    html+='<td bgcolor="#1BCFEF">';
   }else{
    html+='<td>';
@@ -6003,7 +5891,7 @@ function buildMachinesModal(data){
 var html='';
 var dropdown='<option></option>';
 for(var i=0;i<data.length;i++){
-dropdown+='<option sku="'+data[i].sku+'" value="'+data[i].sku+'">'+data[i].name+'</option>';
+dropdown+='<option sku="'+data[i].id+'" value="'+data[i].id+'">'+data[i].name+'</option>';
 }
 html+='<div>';
 html+='<p>Please make sure the Machine fill levels follow the format: 10,20,32,35, etc... If a machine is active, but has no fill levels, then it will not be used in scheduling.</p>';
@@ -6020,7 +5908,7 @@ html+='<tr><td>'+data[i].name+'</td>';
 var status = data[i].status ? "ON" : "OFF";
 html+='<td>'+status+'</td>';
 html+='<td>'+data[i].fillLevels+'</td>';
-html+='<td><button   type="button" class="btn btn-primary" fillLevels="'+data[i].fillLevels+'" status="'+data[i].status+'"  sku="'+data[i].sku+'" name="'+data[i].name+'" onclick="editMachine(this)">Edit</button></td><td><button  type="button" class="btn btn-danger" sku="'+data[i].sku+'"   status="'+data[i].status+'"  name="'+data[i].name+'"  onclick="deleteMachine(this)">Delete</button></td></tr>'
+html+='<td><button   type="button" class="btn btn-primary" fillLevels="'+data[i].fillLevels+'" status="'+data[i].status+'"  sku="'+data[i].id+'" name="'+data[i].name+'" onclick="editMachine(this)">Edit</button></td><td><button  type="button" class="btn btn-danger" sku="'+data[i].id+'"   status="'+data[i].status+'"  name="'+data[i].name+'"  onclick="deleteMachine(this)">Delete</button></td></tr>'
 
 }
 html+='<tr><td></td><td></td><td></td><td></td><td><button class="btn btn-success" onclick="newMachine()">New Machine</button></td></tr>';
@@ -6068,15 +5956,16 @@ google.script.run.withSuccessHandler(refreshMachines).remove_item(sku,'Machines'
 
 function saveMachine(){
 var obj={
-sku:$("#machineopssku").val(),
+id:$("#machineopssku").val(),
 name:$("#machineopsname").val(),
 status:$("#machineopsactive").prop('checked'),
 fillLevels:$("#machineopsfillLevels").val(),
 }
-if(!obj.sku){
+if(!obj.id){
 alert('No SKU!');
 return false;
 }
+console.log('obj',obj);
 google.script.run.withSuccessHandler(refreshMachines).newBasicItem(obj, 'Machines');
 }
 
@@ -6392,6 +6281,7 @@ var obj={
 shiftTimes:$("#shifts"+days[i]).val(),
 breakTimes:$("#breaks"+days[i]).val(),
 status:status,
+day:days[i],
 }
 if(status){
 options += '"' + days[i] + '":' + JSON.stringify(obj) + ',';
@@ -6400,7 +6290,7 @@ options += '"' + days[i] + '":' + JSON.stringify(obj) + ',';
 
 }
 options += '}';
-
+console.log('options',options);
 google.script.run.withSuccessHandler(refreshScheduleView).saveBreaks(options);
 }
 
@@ -6438,9 +6328,9 @@ $('#'+name).show();
 
 function closemainmodal(){
 console.log('here');
-modalclosed = true;
-$('#htmlMSGmodal').hide();
-$('.modal-backdrop').hide();
+//modalclosed = true;
+$('#htmlMSGmodal').modal('toggle');
+//$('.modal-backdrop').removeClass( "show" );
 }
 
 
@@ -6578,7 +6468,6 @@ alert(msg);
 $("#updating").css("display", "none");
 }
 
-
 function getRoundups(){
 google.script.run.withSuccessHandler(buildhtmlmodal).getRoundups();
 
@@ -6588,8 +6477,8 @@ function buildRoundups(data){
 var html = '';
 html+='\
 <div style="margin:0 auto; width:500px;"><h2>Round Up Amounts</h2>';
-html+='<div  ><p> Regular: <input  class="form-control" id="roundupnic" value="'+data.nic+'"/>';
-html+='<p> CBD: <input  class="form-control" id="roundupcbd" value="'+data.cbd+'"/><div>';
+html+='<div  ><p> Regular: <input  class="form-control" id="roundupnic" value="'+data.nic+'"/></p>';
+html+='<p> CBD: <input  class="form-control" id="roundupcbd" value="'+data.cbd+'"/></p><div>';
 html+='<hr></div>\
 <div>\
 <button type="button" class="btn btn-success sarButton" onclick="saveRoundups()">Save Current</button>';
@@ -6646,203 +6535,5 @@ months:parseInt($("#globalFilterMonths").val(),10),
 console.log('obj',obj);
 google.script.run.withSuccessHandler(refreshOrdersMSG).updateglobalFilter(obj);
 
-}
-
-
-//REPORTING
-
-function setupReporting(list){
-
-//console.log(list);
-var html='';
-for(var i=0;i<list.length;i++){
-html+='<option value="'+list[i]+'">'+list[i]+'</option>';
-}
-//console.log(html);
-$('#OrderIds1').html(html);
-$('#OrderIds2').html('');
-
-}
-function generateReport(event){
-var reportType = $(event).attr('reportType');
-var name = $(event).attr('name');
-var arr = [];
-var myOpts = document.getElementById('OrderIds2').options;
-for(var i=0;i<myOpts.length;i++){
-arr.push(myOpts[i].value);
-}
-if(arr.length==0){
-arr =['all'];
-}
-
-var date1=$("#startSearchReporting").val();
-var date2=$("#startSearchReporting").val();
-if(!date1 && !date2){
-date1='all';
-}else if(!date1 && date2){
-date1=0;
-}else if(date1 && !date2){
-date2=new Date().getTime();
-}
-
-if(date1 && date1!='all'){
-date1= new Date(date1).getTime();
-}
-
-if(date2){
-date2= new Date(date2).getTime();
-}else{
-date2= new Date().getTime();
-}
-var data={
-orderIDs:arr,
-shippingdates:[date1,date2]
-}
- $("#updating").css("display", "block");
- console.log(data);
-  google.script.run.withSuccessHandler(showReport).createOrdersReport(data,name,reportType)
-}
-
-function showReport(obj){
-$("#updating").css("display", "none");
-$("#reportLink").html('<a href="'+obj.url+'" target="_blank">'+obj.name+'</a>')
-}
-
-  $('.leftSwitch').click(function () {
-  console.log('clicked left1');
-  var type1 = $(this).attr('type1');
-  var type2 = $(this).attr('type2');
- 
-  moveItems(type2,type1);
- 
-  });
-  
-  $('.rightSwitch').on('click', function () {
-  console.log('clicked right1');
-  var type1 = $(this).attr('type1');
-  var type2 = $(this).attr('type2');
-  
-  moveItems(type1,type2);
- 
-  });
-  
-  $('.leftallSwitch').on('click', function () {
-  var type1 = $(this).attr('type1');
-  var type2 = $(this).attr('type2');
-  
-  moveAllItems(type2,type1);
- 
-  });
-  
-  $('.rightallSwitch').on('click', function () {
-  var type1 = $(this).attr('type1');
-  var type2 = $(this).attr('type2');
-  
-  moveAllItems(type1,type2);
- 
-  });
-function left(event){
-
-  var type1 = $(event).attr('type1');
-  var type2 = $(event).attr('type2');
- 
-  moveItems(type2,type1);
- 
-
-}
-
-function right(event){
-
-  var type1 = $(event).attr('type1');
-  var type2 = $(event).attr('type2');
- 
-  moveItems(type1,type2);
- 
-
-}
-function leftAll(event){
-  var type1 = $(event).attr('type1');
-  var type2 = $(event).attr('type2');
-  
-  moveAllItems(type2,type1);
- 
-
-}
-function rightAll(event){
-  var type1 = $(event).attr('type1');
-  var type2 = $(event).attr('type2');
-  
-  moveAllItems(type1,type2);
-
-}
-//SAFETY REPORTS
-
-function getpremixReports(){
-google.script.run.withSuccessHandler(buildhtmlmodal).getPremixDropdown();
-
-};
-function setupSafetyRepors(list){
-
-//console.log(list);
-var html='';
-for(var i=0;i<list.length;i++){
-html+='<option value="'+list[i].sku+'">'+list[i].sku+' - '+list[i].name+'</option>';
-}
-return html;
-}
-function buildPremixSelector(list){
-var html = '';
-html+='<div class="container">\
-<div>\
-<p>Select Premix Codes</p>\
-<div class="form-group">\
-<select id="dd1" class="form-control" multiple="multiple">\
-'+setupSafetyRepors(list)+'\
-</select>\
-</div>\
-<br />\
-<button type="button" class="leftSwitch" onclick="left(this)" id="leftSwitch" type1="#dd1" type2="#dd2"><i class="fa fa-caret-up" aria-hidden="true"></i></button>\
-<button type="button" class="rightSwitch" id="rightSwitch" onclick="right(this)" type1="#dd1" type2="#dd2"><i class="fa fa-caret-down" aria-hidden="true"></i></button>\
-<button type="button" class="leftallSwitch" id="leftallSwitch" onclick="leftAll(this)" type1="#dd1" type2="#dd2"><i class="fa fa-caret-square-o-up" aria-hidden="true"></i></button>\
-<button type="button" class="rightallSwitch" id="rightallSwitch" onclick="rightAll(this)" type1="#dd1" type2="#dd2"><i class="fa fa-caret-square-o-down" aria-hidden="true"></i></button>\
-<br />\
-<label for="dd2">Selected</label>\
-<div class="form-group">\
-<select id="dd2" class="form-control" multiple="multiple">\
-</select>\
-</div>\
-</div>\
-<button type="button" class="btn btn-success sarButton" onclick="generateSafetyReports()">Generate</button>';
-return html;
-}
-function generateSafetyReports(){
-
-var arr = [];
-var myOpts = document.getElementById('dd2').options;
-for(var i=0;i<myOpts.length;i++){
-arr.push(myOpts[i].value);
-}
-
-
-
-$("#updating").css("display", "block");
-
-google.script.run.withSuccessHandler(htmlModalMSG).printSafetyReports(arr);
-}
-function generateSafetyReportsSingle(sku){
-
-$("#updating").css("display", "block");
-
-google.script.run.withSuccessHandler(htmlModalMSG).printSafetyReports([sku]);
-}
-
-function htmlModalMSG(msg){
-buildhtmlmodal([msg,'htmlMSG'])
-  
-}
-function buildHtmlMsg(msg){
-var html='<div  class="container">'+msg+'</div>';
-
-return html;
 }
 </script>

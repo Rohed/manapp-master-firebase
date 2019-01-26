@@ -12,7 +12,7 @@ function testmachinestatus(){
     });
     
     allMachinesList = allMachinesList.filter( function (machine){
-    Logger.log(machine.status? 'yes':'no');
+ 
     return machine.status == true})
   }
   
@@ -31,23 +31,14 @@ function saveSchedule(dataPaginated, obj) {
   };
   try{
   
-//    for(var j = 0 ; j<dataPaginated.length;j++){
-//      for(var b = 0 ; b<dataPaginated[j].length;b++){
-//       if(dataPaginated[j][b].batch){ 
-//        if(dataPaginated[j][b].movedtoNext!=0){
-//          return 'Order '+dataPaginated[j][b].batch+' has already been started.';
-//        }
-//        }
-//        
-//      }
-//    }
+
   obj.id=obj.entryDate;
     var payload={ 
       'dataPaginated':JSON.stringify(dataPaginated),
       'obj':JSON.stringify(obj),
     };
 
-
+ 
     var params={
       method:"POST",
       "Content-Type":'application/json',
@@ -154,21 +145,11 @@ function DeleteSchedule(obj){
 
 }
 function insertNewSchedule(dataPaginated, obj){
-//  for(var j = 0 ; j<dataPaginated.length;j++){
-//    for(var b = 0 ; b<dataPaginated[j].length;b++){
-//    if(dataPaginated[j][b].batch){ 
-//      if(dataPaginated[j][b].movedtoNext!=0){
-//      return 'Order '+dataPaginated[j][b].batch+' has already been started.';
-//      }
-//      }
-//    }
-//    
-//  }
-  
+
   var msg= saveSchedule(dataPaginated, obj);
   Utilities.sleep(5000);
-  var oldItem = base.getData('Schedules Reference/'+obj.entryDate);
-  var newItem = base.getData('Schedules Reference/'+obj.entryDate);
+  var oldItem = base.getData('SchedulesReference/'+obj.entryDate);
+  var newItem = base.getData('SchedulesReference/'+obj.entryDate);
   updateSchedulesFor(newItem, oldItem)
   return msg;
 }
@@ -183,13 +164,13 @@ function testSAVESCHEDYLEANDMOVE() {
     for (var i = 0; i < para.length; i++) {
         var searcharr = [];
         var params = {
-            orderBy: ['final_status'],
-            equalTo: "started",
+            orderBy: 'final_status',
+            equalTo: "Not Run",
 
         }
         searcharr.push(['Production', params]);
         var params = {
-            orderBy: ['word'],
+            orderBy: 'word',
             equalTo: para[i],
 
         }
@@ -243,502 +224,6 @@ Logger.log(data);
 
 
 }
-
-function JUSTSAVESCHEDULE(){
-
-var name = '00010519';
-//    var para = ['00010646','00010684','00010530','00010545','00010546','00010549','00010604','00010612','00010622','00010644',
-//'00010645','00010681','00010666','00010677'];
-// spec 00010512
- var searcharr = [];
-        var params = {
-            orderBy: ['final_status'],
-            equalTo: "started",
-
-        }
-        searcharr.push(['Production', params]);
-        var params = {
-            orderBy: ['word'],
-            equalTo: name,
-
-        }
-        searcharr.push(['Production', params]);
-
-
-
-        var data = searchFor(searcharr)[1];
-        var obj = {
-            name: name,
-            type: 'automatic',
-            entryDate: (new Date()).getTime(),
-        }
-        obj.date = new Date();
-        obj.date = obj.date.setUTCHours(0,0,0,0);
-    
-//        var params={
-//        method:"POST",
-//        muteHttpExceptions :true,
-//          payload:{ 
-//           
-//              obj:obj,
-//              dataPaginated:[data],
-//          }
-//        }
-//        
-    obj.id=obj.entryDate;
-    var payload={ 
-      'dataPaginated':JSON.stringify([data]),
-      'obj':JSON.stringify(obj),
-    };
-  base.updateData('schedulingpayload/payload',payload);
-    return;
-//        var url='https://us-central1-testing-gbvco-factory-app.cloudfunctions.net/createSchedules';
-//        var resp=UrlFetchApp.fetch(url, params);
-//        Logger.log(resp);
-
-}
-//function saveSchedule2(dataPaginated, obj) {
-//    var today = new Date().getTime();
-//    var data = [];
-//    dataPaginated.map(function(item) {
-//        data = data.concat(item);
-//    });
-//
-//    data = data.sort(sortNUMHL('priority'));
-//    var allocatedData = [];
-//    var fillLevels = base.getData('FillLevels');
-//    var allMachines = base.getData('Machines');
-//    var allMachinesList = JSONtoARR(allMachines);
-//    var allMachinesListKeys = [];
-//    var notAllocated = [];
-//    if (allMachines) {
-//        allMachinesListKeys = Object.keys(allMachines)
-//    }
-//    if (obj.type == 'manual') {
-//        var schedules = getSchedulesForDate(obj.date);
-//
-//    } else {
-//        var schedules = getSchedulesAvailable();
-//
-//    }
-//    if (schedules.length > 0) {
-//        var j = 0;
-//        var loop = 0;
-//        for (var i = 0; i < schedules.length; i++) {
-//            var machinesGraded = gradeMachines(schedules[i], allMachinesListKeys);
-//
-//            while (j < data.length) {
-//      
-//                var machineType = getMachineType(data[j]);
-//                if (data[j].fill) {
-//                    var time = fillLevels[data[j].fill].time
-//                    var timeTotal = data[j].bottles * time;
-//                } else {
-//                    var time = 1;
-//                    var timeTotal = data[j].QTY * time;
-//                }
-//                var split = 0;
-//                if (timeTotal > 5) {
-//                    split += Math.ceil(timeTotal / 5);
-////                    if (timeTotal % 30 != 0) {
-////                        split++
-////                    }
-//                } else {
-//                    split++
-//                }
-//                var datset1 = false;
-//                for (var m = 0; m < machinesGraded.length; m++) {
-//                    var datset2 = false;
-//                    if (data[j].machineP) {
-//                        if (machinesGraded[m][0] != data[j].machineP) {
-//                            continue;
-//                        }
-//
-//                    }
-//
-//
-//                    for (var mt = 0; mt < machineType.length; mt++) {
-//
-//                        if (allMachines[machinesGraded[m][0]].name.match(machineType[mt])) {
-//
-//                            var datset3 = false;
-//                            for (var s = 0; s < machinesGraded[m][2].length; s++) {
-//                                if (obj.time && i == 0) {
-//                                    var index = machinesGraded[m][2][s].indexOf(obj.time);
-//                                    machinesGraded = removeItemFromARR(machinesGraded, m, s, index);
-//                                }
-//                                
-//                              if(split>machinesGraded[m][2][s].length){
-//                                var tempSplit=machinesGraded[m][2][s].length;
-//                                split-=machinesGraded[m][2][s].length;
-//                              }else{
-//                                var tempSplit = split;
-//                              }
-//                              if (machinesGraded[m][2][s].length >0) {
-//                                    var taken = machinesGraded[m][2][s].slice(0, tempSplit);
-//                                    machinesGraded = removeItemFromARR(machinesGraded, m, s, tempSplit);
-//                                    if (timeTotal > 5) {
-//                                        var tk = 0;
-//                                        while (timeTotal > 5 && !isNaN(taken[tk])) {
-//                                            var bottles = Math.floor(5 / time);
-//                                            timeTotal = timeTotal - 5;
-//                                            data[j].bottles = data[j].bottles - bottles;
-//                                            allocatedData.push([data[j].batch, bottles, schedules[i].id, 5, machinesGraded[m][0], taken[tk]]);
-//                                            tk++;
-//                                        }
-//                                        if (timeTotal > 0  && !isNaN(taken[tk])) {
-//                                            allocatedData.push([data[j].batch, data[j].bottles, schedules[i].id, timeTotal, machinesGraded[m][0], taken[tk]]);
-//                                        }
-//                                    } else {
-//                                        allocatedData.push([data[j].batch, data[j].bottles, schedules[i].id, timeTotal, machinesGraded[m][0], taken.toString()]);
-//                                    }
-//                                    machinesGraded[m][1] += tempSplit;
-//                                    machinesGraded = machinesGraded.sort(sortMachinesGrade);
-//                                    datset3 = true;
-//                                    break;
-//                               }
-//                            }
-//                            if (datset3) {
-//                                datset2 = true;
-//                                break;
-//
-//                            }
-//                        }
-//
-//                        if (datset2) {
-//                            datset1 = true;
-//                            break;
-//
-//                        }
-//                    }
-//
-//
-//                    if (datset1) {
-//                        break;
-//
-//                    }
-//                }
-//                if (!datset1) {
-//                    var ref = 3;
-//                    if (data[j].bottles) {
-//                        ref = 0;
-//                        var tpb = data[j].bottles;
-//                        while (tpb > 200) {
-//                            tpb = tpb / 2;
-//                            ref++
-//                        }
-//
-//                    } else {
-//                        ref = 0;
-//                        var tpb = data[j].QTY;
-//                        while (tpb > 20) {
-//                            tpb = tpb / 2;
-//                            ref++
-//                        }
-//
-//                    }
-//
-//                    if (((data[j].priority >= 1 && data[j].priority <= 4)) && (loop <= ref)) {
-//                        loop++;
-//
-//                        if (data[j].bottles) {
-//
-//                            Logger.log('Original:' + data[j].bottles);
-//                            var active = data[j].bottles;
-//                            var split = Math.ceil(active / 2);
-//                            var other = data[j];
-//                            other.bottles = other.bottles - split;
-//                            data[j].bottles = split;
-//                            Logger.log('Other:' + other.bottles + "  Data:" + data[j].bottles + " SPLIT:" + split + " Loop:" + loop);
-//
-//                        } else {
-//
-//                            var active = data[j].QTY;
-//                            var split = Math.ceil(active / 2);
-//                            var other = data[j];
-//                            other.QTY = other.QTY - split;
-//                            data[j].QTY = split;
-//
-//
-//                        }
-//                        data.splice(j + 1, 0, other);
-//                        j--;
-//                    } else {
-//                        if (loop > 0) {
-//                            for (var l = 0; l < loop; l++) {
-//                                notAllocated.push(data[j + l]);
-//                                j++;
-//                            }
-//
-//                        } else {
-//                            notAllocated.push(data[j]);
-//                        }
-//                        loop = 0;
-//                    }
-//                }
-//                j++;
-//            }
-//
-//
-//        }
-//
-//    } else {
-//        allocatedData = allocatedData.concat(createNewScheduleAllData(data, allMachinesListKeys, allMachines, fillLevels, obj.date, obj.date));
-//    }
-//    if (notAllocated.length > 0) {
-//        allocatedData = allocatedData.concat(createNewScheduleAllData(notAllocated, allMachinesListKeys, allMachines, fillLevels, parseInt(schedules[schedules.length - 1].id, 10) + (60 * 60 * 1000 * 24), obj.date));
-//    }
-//    Logger.log(allocatedData);
-//    var unique_scheduleIDs = [];
-//
-//
-//    var options = '{';
-//    var exists = {};
-//    var production = base.getData('Production');
-//    for (var i = 0; i < allocatedData.length; i++) {
-// 
-//        unique_scheduleIDs.push(allocatedData[i][2]);
-//        var batch = {
-//            batch: allocatedData[i][0],
-//            bottles: allocatedData[i][1],
-//            schedule_ID: allocatedData[i][2].toString(),
-//            timeTotal: allocatedData[i][3],
-//            machine_ID: allocatedData[i][4],
-//            slots: [allocatedData[i][5]].join(','),
-//
-//        }
-//        var dat = {
-//            machineP: allocatedData[i][4],
-//        };
-//
-//        base.updateData('Orders/' + batch.batch, dat);
-//        if (production[batch.batch]) {
-//            base.updateData('Production/' + batch.batch, dat);
-//        }
-//        if (exists) {
-//            if (exists.batch != batch.batch) {
-//                options += '"' + exists.batch + '":' + JSON.stringify(exists) + ',';
-//            }
-//        }
-//
-//        exists = base.getData('Schedules/' + batch.schedule_ID + '/Batches/' + batch.batch);
-//        if (exists) {
-//            exists.bottles += batch.bottles;
-//            exists.timeTotal += batch.timeTotal;
-//            var slots = exists.slots.split(',');
-//            slots.push(batch.slots);
-//            exists.slots = slots.join(',');
-//            var Ids = exists.schedule_ID.split(',');
-//            Ids.push(batch.schedule_ID);
-//            Ids = uniq(Ids);
-//            exists.schedule_ID = Ids.join(','),
-//                base.updateData('Schedules/' + batch.schedule_ID + '/Batches/' + batch.batch, exists);
-//        } else {
-//            base.updateData('Schedules/' + batch.schedule_ID + '/Batches/' + batch.batch, batch);
-//            exists = batch;
-//        }
-//        if (i == allocatedData.length - 1) {
-//            options += '"' + exists.batch + '":' + JSON.stringify(exists) + ',';
-//        }
-//        var machineItem = {
-//            batch: allocatedData[i][0],
-//            bottles: allocatedData[i][1],
-//            timeTotal: allocatedData[i][3],
-//        }
-//        //   for(var j=0;j<allocatedData[i][5].length;j++){
-//
-//        base.updateData('Schedules/' + batch.schedule_ID + '/Machines/' + batch.machine_ID + '/' + allocatedData[i][5] + '/' + batch.batch, machineItem);
-//        //   }
-//        //  allocatedData.push([data[j].batch,data[j].bottles,schedules[i].id,timeTotal,machinesGraded[m][0],taken]);
-//
-//
-//
-//    }
-//    options += '}';
-//
-//    var upload = JSON.parse(options);
-//    var ScheduleReference = obj;
-//    ScheduleReference.id = obj.entryDate.toString();
-//    ScheduleReference.Batches = upload;
-//    base.updateData('Schedules Reference/' + ScheduleReference.id, ScheduleReference);
-//
-//    //unique_scheduleIDs=uniq(unique_scheduleIDs);
-//
-//
-//    return "Schedule: " + obj.name + " has been saved.";
-//}
-//
-//function createNewScheduleAllData(data, allMachinesList, allMachines, fillLevels, id, origID) {
-//    var allocatedData = [];
-//    var machinesGraded = [];
-//
-//    var notAllocated = [];
-//    var splitData = [];
-//    var existingTimes = getTimesWithBrakes(id);
-//    for (var j = 0; j < allMachinesList.length; j++) {
-//        machinesGraded.push([allMachinesList[j], 0, [existingTimes]]);
-//    }
-//
-//
-//    var j = 0;
-//    var loop = 0;
-//    while (j < data.length) {
-//
-//        var machineType = getMachineType(data[j]);
-//        if (data[j].fill) {
-//            var time = fillLevels[data[j].fill].time
-//            var timeTotal = data[j].bottles * time;
-//        } else {
-//            var time = 3;
-//            var timeTotal = data[j].QTY * time;
-//        }
-//        var split = 0;
-//        if (timeTotal > 5) {
-//            split += Math.ceil(timeTotal / 5);
-////            if (timeTotal % 5 != 0) {
-////                split++
-////            }
-//        } else {
-//            split++
-//        }
-//      var origSplit=split;
-//        for (var m = 0; m < machinesGraded.length; m++) {
-//            var datset1 = false;
-//            if (data[j].machineP) {
-//                if (machinesGraded[m][0] != data[j].machineP) {
-//                    continue;
-//                }
-//
-//            }
-//
-//            for (var mt = 0; mt < machineType.length; mt++) {
-//                var datset2 = false;
-//                if (allMachines[machinesGraded[m][0]].name.match(machineType[mt])) {
-//
-//
-//                    for (var s = 0; s < machinesGraded[m][2].length; s++) {
-//                      if(split>machinesGraded[m][2][s].length){
-//                        var tempSplit=machinesGraded[m][2][s].length;
-//                        split-=machinesGraded[m][2][s].length;
-//                      }else{
-//                        var tempSplit = split;
-//                      }
-//                     if (machinesGraded[m][2][s].length >0) {
-//                       if(data[j].batch=='906211'){
-//                         Logger.log('here');
-//                       }
-//                       
-//                            var taken = machinesGraded[m][2][s].slice(0, tempSplit);
-//                            machinesGraded = removeItemFromARR(machinesGraded, m, s, tempSplit);
-//                 
-//                            if (timeTotal > 5) {
-//                                var tk = 0;
-//                                while (timeTotal > 5 && !isNaN(taken[tk])) {
-//                                    var bottles = Math.floor(5 / time);
-//                                    timeTotal = timeTotal - 5;
-//                                    data[j].bottles = data[j].bottles - bottles;
-//                                    allocatedData.push([data[j].batch, bottles, id, 5, machinesGraded[m][0], taken[tk]]);
-//                                    tk++;
-//
-//                                }
-//                                if (timeTotal > 0 && !isNaN(taken[tk])) {
-//                                    allocatedData.push([data[j].batch, data[j].bottles, id, timeTotal, machinesGraded[m][0], taken[tk]]);
-//                                }
-//                            } else {
-//                                allocatedData.push([data[j].batch, data[j].bottles, id, timeTotal, machinesGraded[m][0], taken]);
-//                            }
-//                            machinesGraded[m][1] += tempSplit;
-//                            machinesGraded = machinesGraded.sort(sortMachinesGrade);
-//                            datset2 = true;
-//                            break;
-//                            
-//                      }
-//                    }
-//
-//                }
-//                if (datset2) {
-//                    datset1 = true;
-//                    break;
-//
-//                }
-//
-//            }
-//
-//            if (datset1) {
-//                break;
-//
-//            }
-//        }
-//        if (!datset1) {
-//            var ref = 3;
-//            if (data[j].bottles) {
-//                ref = 0;
-//                var tpb = data[j].bottles;
-//                while (tpb > 200) {
-//                    tpb = tpb / 2;
-//                    ref++
-//                }
-//
-//            } else {
-//                ref = 0;
-//                var tpb = data[j].QTY;
-//                while (tpb > 20) {
-//                    tpb = tpb / 2;
-//                    ref++
-//                }
-//
-//            }
-//
-//            if (((data[j].priority >= 1 && data[j].priority <= 4) || ((id - origID) >= (2 * 60 * 60 * 1000 * 24))) && (loop <= ref)) {
-//                loop++;
-//
-//                if (data[j].bottles) {
-//
-//                    Logger.log('Original:' + data[j].bottles);
-//                    var active = data[j].bottles;
-//                    var split = Math.ceil(active / 2);
-//                    var other = data[j];
-//                    other.bottles = other.bottles - split;
-//                    data[j].bottles = split;
-//                    Logger.log('Other:' + other.bottles + "  Data:" + data[j].bottles + " SPLIT:" + split + " Loop:" + loop);
-//
-//                } else {
-//
-//                    var active = data[j].QTY;
-//                    var split = Math.ceil(active / 2);
-//                    var other = data[j];
-//                    other.QTY = other.QTY - split;
-//                    data[j].QTY = split;
-//
-//
-//                }
-//                data.splice(j + 1, 0, other);
-//                j--;
-//            } else {
-//                if (loop > 0) {
-//                    for (var l = 0; l < loop; l++) {
-//                        notAllocated.push(data[j + l]);
-//                        j++;
-//                    }
-//
-//                } else {
-//                    notAllocated.push(data[j]);
-//                }
-//                loop = 0;
-//            }
-//        }
-//
-//
-//        j++;
-//    }
-//
-//    if (notAllocated.length > 0) {
-//
-//        return allocatedData = allocatedData.concat(createNewScheduleAllData(notAllocated, allMachinesList, allMachines, fillLevels, id + (60 * 60 * 1000 * 24), origID));
-//    } else {
-//        return allocatedData;
-//    }
-//}
 
 function getMachineType(item) {
     if (item.fill == 10 && !item.CBDrecipe) {
@@ -799,7 +284,7 @@ function getTimesWithBrakes(id){
   }
   var t1= timeArr[0];
    var t2= timeArr[timeArr.length-1];
-  var dayofWeek=base.getData('Schedules Breaks/'+days[day]);
+  var dayofWeek=base.getData('SchedulesBreaks/'+days[day]);
   if(dayofWeek){
     if(dayofWeek.status){
     
@@ -969,7 +454,7 @@ function testrREMEVEO() {
 
 
 function getScheduleDropdown() {
-    var data = base.getData('Schedules Reference');
+    var data = base.getData('SchedulesReference');
     var list = JSONtoARR(data);
     var resp = [];
     list.map(function(item) {
@@ -982,9 +467,9 @@ function getScheduleDropdown() {
 
 function getScheduleData(id, page) {
     var ret = [];
-    var data = base.getData('Schedules Reference/' + id);
+    var data = base.getData('SchedulesReference/' + id);
 
-    var orders = JSONtoARR(data.Batches);
+    var orders = data.Batches;
     var pageData = base.getData(page);
 
     for (var i = 0; i < orders.length; i++) {
@@ -1004,10 +489,11 @@ function getScheduleDataNearest(page) {
     now = now.setUTCHours(0,0,0,0).toString();
 
     var ret = [];
-    var data = base.getData('Schedules');
+    var schedules = base.getData('Schedules');
+    var data = {};
     var list = JSONtoARR(data);
-    if (data) {
-        var keys = Object.keys(data);
+    if (schedules) {
+        var keys = Object.keys(schedules);
         for (var i = 0; i < list.length; i++) {
             if (parseInt(keys[i], 10) >= (parseInt(now, 10)-(60*60*1000*5))) {
 
@@ -1016,29 +502,29 @@ function getScheduleDataNearest(page) {
             }
 
         }
+        if(data){
 
-
-        var orders = JSONtoARR(data.Batches);
-        var pageData = base.getData(page);
-
-        var now2 = new Date();
-        var hours = now2.getHours() + 10;
-        var minutes = now2.getMinutes();
-
-        var time = Math.floor((((hours / 12) * 60) + minutes) / 5) * 30;
-        time=time.toString();
-        for (var i = 0; i < orders.length; i++) {
+          var orders = data.Batches;
+          var pageData = base.getData(page);
+          
+          var now2 = new Date();
+          var hours = now2.getHours() + 10;
+          var minutes = now2.getMinutes();
+          
+          var time = Math.floor((((hours / 12) * 60) + minutes) / 5) * 30;
+          time=time.toString();
+          for (var i = 0; i < orders.length; i++) {
             var slots = orders[i].slots;
             slots = slots.split(',');
             if (slots.indexOf(time) >= 0) {
-                if (pageData[orders[i].batch]) {
-                    ret.push(pageData[orders[i].batch]);
-                }
+              if (pageData[orders[i].batch]) {
+                ret.push(pageData[orders[i].batch]);
+              }
             }
-
+            
+          }
+          
         }
-       
-       
 
     }
     
@@ -1047,11 +533,11 @@ function getScheduleDataNearest(page) {
 
 
 function getScheduleView() {
-    var breaks = base.getData('Schedules Breaks');
+    var breaks = base.getData('SchedulesBreaks');
     if (!breaks) {
         breaks = [];
     }
-    var data = base.getData('Schedules Reference');
+    var data = base.getData('SchedulesReference');
     var list = JSONtoARR(data);
     var resp = [];
     list.map(function(item) {
@@ -1061,7 +547,7 @@ function getScheduleView() {
             batchList = Object.keys(Batches);
             batchList = batchList.join(', ');
         }
-        resp.push([item, item.id, item.date, item.name, item.type, batchList]);
+        resp.push([item, item.id, (item.date ? item.date : 'auto'), item.name, item.type, batchList]);
 
     });
     return [
@@ -1072,7 +558,7 @@ function getScheduleView() {
 
 function saveBreaks(breaks) {
  
-        base.updateData('Schedules Breaks/', JSON.parse(breaks));
+        base.updateData('SchedulesBreaks', JSON.parse(breaks));
 
 }
 
@@ -1097,7 +583,7 @@ function editSchedule(newItem, oldItem) {
         var name = {
             name: newItem.name,
         }
-        base.updateData('Schedules Reference/' + oldItem.id, name);
+        base.updateData('SchedulesReference/' + oldItem.id, name);
     }
     if (oldItem.date != newItem.date) {
         updateSchedulesFor(newItem, oldItem);
@@ -1390,7 +876,7 @@ try{
   }else{
   var names=[];
    for(var i=0;i<opt.selected.length;i++){
-   names.push(base.getData('Schedules Reference/'+opt.selected[i].toString()+'/name'));
+   names.push(base.getData('SchedulesReference/'+opt.selected[i].toString()+'/name'));
    }
    if(names.length>1){
    name=names.join(', ');
@@ -1595,28 +1081,21 @@ function getTodaySchedule(){
   var botandbatchLarge = [];
   var date= new Date().setUTCHours(0,0,0,0);
   var dateSTR = date.toString();
-  var schedules = base.getData('Schedules');
+  var schedules = base.getData('Schedules/'+date);
   if(schedules){
-    var keys=Object.keys(schedules);
-    schedules = {};
-    for(var i=0;i<keys.length;i++){
-      var searchSTR  = keys[i];
-      if(parseInt(searchSTR,10)>=date && parseInt(searchSTR,10)<=date){
-        var item=base.getData('Schedules/'+searchSTR);
-        
-        if(item){
-          item.id=date;
-          var machineKeys=Object.keys(item.Machines);
-          for(var j=0;j<machineKeys.length;j++){
-            var machineTimes=item.Machines[machineKeys[j]];
+        var item=schedules;
+     
+          var machines= item.Machines;
+          for(var j=0;j<machines.length;j++){
+            var machineTimes=ARRtoJSON(machines[j].times,'times');
             var machineTimesKeys=Object.keys(machineTimes);  
-            var arrToPush=[date,machineKeys[j]];
+            var arrToPush=[date,machines[j].id];
             var botandbatch = [[1],[2]];
             for(var mt=0;mt<existingTimes.length;mt++){
               if(machineTimes[mt*5]){
-                var batch=Object.keys(machineTimes[mt*5]);
-                arrToPush.push(orders[batch[0]].orderID+'/'+batch[0]+' '+orders[batch[0]].productdescription);
-                botandbatch.push([batch[0],machineTimes[mt*5][batch[0]].bottles]);
+                var batch=machineTimes[mt*5].Batch;
+                arrToPush.push(orders[batch.batch].orderID+'/'+batch.batch+' '+orders[batch.batch].productdescription);
+                botandbatch.push([batch.batch,batch.bottles]);
               }else{
                 arrToPush.push('');
                 botandbatch.push([]);
@@ -1625,10 +1104,8 @@ function getTodaySchedule(){
             arr.push(arrToPush);
             botandbatchLarge.push(botandbatch)
           }
-          break;
-        }
-      }
-    }
+         
+    
   }
   
 
@@ -1651,20 +1128,20 @@ function getFromToSchedule(from,to){
   for(var i=0;i<keys.length;i++){
     var searchSTR  = keys[i];
     if(parseInt(searchSTR,10)>=from && parseInt(searchSTR,10)<=to){
-    var item=base.getData('Schedules/'+searchSTR);
+    var item=schedules[searchSTR];
     if(item){
-      item.id= keys[i];
-      var machineKeys=Object.keys(item.Machines);
-      for(var j=0;j<machineKeys.length;j++){
-      var machineTimes=item.Machines[machineKeys[j]];
+    
+      var machines= item.Machines;
+      for(var j=0;j<machines.length;j++){
+      var machineTimes=ARRtoJSON(machines[j],'times');
       var machineTimesKeys=Object.keys(machineTimes);  
-       var arrToPush=[ keys[i],machineKeys[j]];
+       var arrToPush=[ keys[i],machines[j].id];
        var botandbatch = [[1],[2]]; 
         for(var mt=0;mt<existingTimes.length;mt++){
           if(machineTimes[mt*5]){
-            var batch=Object.keys(machineTimes[mt*5]);
-            arrToPush.push(orders[batch[0]].orderID+'/'+batch[0]+' '+orders[batch[0]].productdescription);
-            botandbatch.push([batch[0],machineTimes[mt*5][batch[0]].bottles]);
+            var batch=machineTimes[mt*5].Batch;
+            arrToPush.push(orders[batch.batch].orderID+'/'+batch.batch+' '+orders[batch.batch].productdescription);
+            botandbatch.push([batch.batch,batch.bottles]);
           }else{
             arrToPush.push('');
             botandbatch.push([]);
@@ -1693,17 +1170,17 @@ function getSelectedSchedules(selected){
   var orders=base.getData('Production');
   var schedules=base.getData('Schedules');
   for(var s=0;s<selected.length;s++){
-    var item=base.getData('Schedules Reference/'+selected[s]);
-    var BatchKeys=Object.keys(item.Batches);
-    for(var b=0;b<BatchKeys.length;b++){
-      var BatchItem=item.Batches[BatchKeys[b]];
+    var item=base.getData('SchedulesReference/'+selected[s]);
+    var Batches= item.Batches;
+    for(var b=0;b<Batches.length;b++){
+      var BatchItem=Batches[b];
       var scheduleIDs=BatchItem.schedule_ID;
       scheduleIDs=scheduleIDs.split(',');
       for(var i=0;i<scheduleIDs.length;i++){
         active.push(parseInt(scheduleIDs[i],10))
        
       }
-     batches.push(BatchKeys[b]);
+     batches.push(BatchItem.batch);
     }
     
   }
@@ -1717,18 +1194,18 @@ function getSelectedSchedules(selected){
   var item=schedules[active[a].toString()];
     if(item){
     item.id=active[a];
-    var machineKeys=Object.keys(item.Machines);
-    for(var j=0;j<machineKeys.length;j++){
-      var machineTimes=item.Machines[machineKeys[j]];
+    var machines=item.Machines;
+    for(var j=0;j<machines.length;j++){
+      var machineTimes=ARRtoJSON(machines[j].times,'times');
       var machineTimesKeys=Object.keys(machineTimes);  
-      var arrToPush=[active[a],machineKeys[j]];
+      var arrToPush=[active[a],machines[j].id];
       var botandbatch = [[1],[2]]; 
       for(var mt=0;mt<existingTimes.length;mt++){
         if(machineTimes[mt*5]){
-          var batch=Object.keys(machineTimes[mt*5]);
-          if(batches.indexOf(batch[0])>=0){
-          arrToPush.push(orders[batch[0]].orderID+'/'+batch[0]+' '+orders[batch[0]].productdescription);
-           botandbatch.push([batch[0],machineTimes[mt*5][batch[0]].bottles]);
+          var batch= machineTimes[mt*5].Batch;
+          if(batches.indexOf(batch.batch)>=0){
+          arrToPush.push(orders[batch.batch].orderID+'/'+batch.batch+' '+orders[batch.batch].productdescription);
+           botandbatch.push([batch.batch,batch.bottles]);
           }else{
            arrToPush.push('');
            botandbatch.push([]);
@@ -1757,7 +1234,7 @@ function fillArray(len) {
 }
 function testgetPREV(){
 
-GetSchedulePreview(1527724800000);
+GetSchedulePreview(1539129600000);
 }
 function GetSchedulePreview(date){
   var ID = new Date(date).setUTCHours(0,0,0,0).toString();
@@ -1826,16 +1303,16 @@ function FormatScheduleForDate(date){
 
   var item=base.getData('Schedules/'+date);
   if(item){
-    item.id=date;
-    var machineKeys=Object.keys(item.Machines);
-    for(var j=0;j<machineKeys.length;j++){
-      var machineTimes=item.Machines[machineKeys[j]];
+    
+    var machines= item.Machines;
+    for(var j=0;j<machines.length;j++){
+      var machineTimes=ARRtoJSON(machines[j].times,'times');
       var machineTimesKeys=Object.keys(machineTimes);  
-      var arrToPush=[machineKeys[j]];
+      var arrToPush=[machines[j].id];
       for(var mt=0;mt<existingTimes.length;mt++){
         if(machineTimes[mt*5]){
-          var batch=Object.keys(machineTimes[mt*5]);
-          arrToPush.push(batch[0])
+          var batch=machineTimes[mt*5].Batch;
+          arrToPush.push(batch.batch)
         }else{
           arrToPush.push('');
         }
