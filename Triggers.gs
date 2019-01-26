@@ -7,7 +7,7 @@ function createTriggers() {
   
   ScriptApp.newTrigger("exportCompletedItems")
   .timeBased()
-  .atHour(21)
+  .atHour(19)
   .everyDays(1) 
   .create();
 }
@@ -24,6 +24,7 @@ subject+=' 2PM report ';
 }else{
 subject+=' 6PM report ';
 }
+
 var name = subject+' '+formattedDate;
 var file = createCompletedExport(today.getHours(),name);
 COMPLETED_ITEMS_MAIL.map(function(item){

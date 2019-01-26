@@ -1,4 +1,60 @@
+function printSafetyReports(SELECTED){
+ 
+  var formattedDate = Utilities.formatDate(new Date(), "GMT", "yyyy-MM-dd");
+  var folder=DriveApp.getFolderById(SAFETYREPORTS.folder);
+  var PC = JSONtoARR(base.getData('References/ProductCodes'));
+  var premixes = base.getData('PremixesTypes');
+  var used = findTemplates(SELECTED,PC,premixes);
+  var notFoundMSG = '';
+    for(var i=0;i<SELECTED.length;i++){
+    
+    var data=premixes[SELECTED[i]];
+    if(used[i] === false){notFoundMSG+='<br> '+SELECTED[i]; continue;}
+    if(!data){notFoundMSG+='<br> '+SELECTED[i]; continue;}
+    if(!SAFETYREPORTS[used[i]]){notFoundMSG+='<br> '+SELECTED[i]; continue;}
+    
+    
+    var create=DriveApp.getFileById(SAFETYREPORTS[used[i]]).makeCopy(SELECTED[i]+' '+formattedDate+' Safety Report',folder);
+    var file=DocumentApp.openById(create.getId());
+    file.replaceText('<<NAME>>',data.name);
+    file.replaceText('<<SKU>>',data.sku);
+    file.getHeader().replaceText('<<NAME>>',data.name);
+    file.getHeader().replaceText('<<SKU>>',data.sku);
+   
+  }
+  
+  var ret = 'Safety Reports generated in the Folder:<br> <a  target="_blank" href="'+folder.getUrl()+'">'+folder.getName()+'</a>';
+  if(notFoundMSG){
+  ret+='<br> COULD NOT PRINT THESE ITEMS DUE TO A MISSING RECIPE OR TYPE OF TEMPLATE:'+notFoundMSG;
+  }
+  return ret;
+}
 
+function findTemplates(SELECTED,PC,premixes){
+  var arr = [];
+  for(var i = 0 ; i < SELECTED.length; i++){
+    var found = false;
+    if(premixes[SELECTED[i]].name.toLowerCase().match('cbd')){
+       arr.push('0');
+       continue;
+    }
+    for(var j = 0 ; j < PC.length; j++){
+      
+      if(PC[j].premixSKU == SELECTED[i] || PC[j].premixSKUColored == SELECTED[i]){
+        found = true;
+        arr.push(PC[j].recipe.strength || base.getData('Recipes/'+PC[j].recipe.id+'/strength'))
+        break;
+      } 
+
+    }
+    
+    if(!found){
+      arr.push(false);
+    }
+  }
+  
+  return arr;
+}
 function printProductionBatches(SELECTED) {
   Logger.log(SELECTED);
   
@@ -112,7 +168,7 @@ function printPackagingBatches(SELECTED,force) {
 
 function testPRING(){
   
-  printShippingNote(['13897965'],1);
+  printShippingNote(['71474925','4670815','27656320'],1);
 }
 
 
@@ -146,9 +202,7 @@ function printShippingNote(data,x){
     for(var j=0;j<list.length;j++){
       
       if(data[i]==list[j].PRINTCODE){
-        if(!packagingData[list[j].batch]){
-        return list[j].batch +" Not found in Packaging.";
-        }
+        
         //        if(list[j].SHIPPINGCODE){
         //        continue;
         //        }
@@ -253,7 +307,7 @@ function printShippingNote(data,x){
   Logger.log(SS.getUrl());
   var dat={
     SHIPPINGCODE:SHIPPINGCODE,
-    dateshipped:new Date().getTime(),
+    dateshipped:formattedDate,
     shipping_status:'Shipped',
   };
   for(var i=0;i<batches.length;i++){
@@ -290,7 +344,14 @@ function printOrdersBatches(SELECTED){
           data[i].packagingType.name = '';
         }
       }
-       
+      if(data[i].final_status == "started"){
+        data[i].final_status = "Started";
+      }else if(data[i].final_status == "Completed"){
+        data[i].final_status =="Completed"
+        
+      }else{
+        data[i].final_status =="Not Run"
+      }
       
       //        data.mixing_status = 0;
       //        data.production_status = 0;

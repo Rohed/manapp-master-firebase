@@ -35,7 +35,7 @@ function saveOrder(data, edit) {
         } else {
             var row = 1;
         }
-        var prod = base.getData('References/' + data.productcode);
+        var prod = base.getData('References/ProductCodes/' + data.productcode);
         data.fill = prod.fill;
         data.boxname = prod.boxname;
         if (data.ppb) {
@@ -64,13 +64,13 @@ function saveOrder(data, edit) {
         data.coloredpremix = 0;
         data.mixing = 0;
         data.backtubed = 0;
-        data.mixing_status = "";
-        data.production_status ="";
-        data.printing_status = "";
-        data.labeling_status = "";
-        data.packaging_status = "";
+        data.mixing_status = 0;
+        data.production_status = 0;
+        data.printing_status = 0;
+        data.labeling_status = 0;
+        data.packaging_status = 0;
         if (data.final_status) {} else {
-            data.final_status = "Not Run";
+            data.final_status = 0;
         }
         data.row = row;
         data.userset = false;
@@ -153,7 +153,6 @@ function saveOrder(data, edit) {
 
         var bsize = parseInt(data.btype.replace(/\D/g, ''), 10);
 
-
         data.flavrecipe = flavvalue;
         data.VGrecipe = VGvalue;
         data.PGrecipe = PGvalue;
@@ -170,14 +169,10 @@ function saveOrder(data, edit) {
         data.AGval = AGrecipe;
 
         if (RECIPE.Color) {
-          var Color = RECIPE.Color;
-          var colorvalue = (QTY * 10 * Color.val);
-          data.Color = Color;
-          data.colorval = colorvalue;
-        }else{
-          data.Color = {name:"",sku:"",val:0};
-          data.colorval = 0;
-          
+            var Color = RECIPE.Color;
+            var colorvalue = (QTY * 10 * Color.val);
+            data.Color = Color;
+            data.colorval = colorvalue;
         }
 
 
@@ -236,8 +231,8 @@ function bulkrun(arr, page) {
 //                LogTransaction([usageArr]);
                 if (resp[0] == 'BREAK') {
                     var dat1 = {
-                        final_status: "Not Run",
-                        starttime: 0,
+                        final_status: 0,
+                        runtime: 0,
                         started: 0,
                         wentNegative: true,
                     };
@@ -255,8 +250,8 @@ function bulkrun(arr, page) {
 
             if (resp[0] == 'BREAK') {
                 var dat1 = {
-                    final_status: "Not Run",
-                    starttime: 0,
+                    final_status: 0,
+                    runtime: 0,
                     started: 0,
                     wentNegative: true,
                 };
@@ -277,7 +272,7 @@ function bulkrun(arr, page) {
 
 
 function testrun() {
-    runItem('914291', false);
+    runItem('915535', false);
 
 }
 
@@ -400,8 +395,8 @@ try{
             } else {
 
                 var dat1 = {
-                    final_status: "Not Run",
-                    starttime: 0,
+                    final_status: 0,
+                    runtime: 0,
                     started: 0,
                     wentNegative: true,
                 };
@@ -453,8 +448,8 @@ try{
         LOGDATA.status = false;
         LOGDATA.msg += 'Can not run Order.';
       var dat1 = {
-        final_status: "Not Run",
-        starttime: 0,
+        final_status: 0,
+        runtime: "",
         unbranded : 0,
         branded : 0,
         premixed : 0,
@@ -474,10 +469,10 @@ function assignMixture2(data) {
     try {
         var USAGE = {};
         var LOGARR = new Array();
-        var starttime = new Date().getTime();
+        var runtime = new Date().getTime();
         var dat1 = {
-            final_status: 'Busy',
-            starttime: starttime,
+            final_status: 'started',
+            runtime: runtime,
         };
 
         base.updateData('Orders/' + data.batch, dat1);
@@ -498,14 +493,14 @@ function assignMixture2(data) {
                 LOGARR = LOGARR.concat(PMIXRUN.LogData);
                 USAGE = PMIXRUN.USAGE;
             } else {
-                if (data.Color) {
+                if (data.recipe.Color) {
                     USAGE.Color = {
-                        sku: data.Color.sku,
-                        name: data.Color.name,
+                        sku: data.recipe.Color.sku,
+                        name: data.recipe.Color.name,
                         qty: data.colorval,
                     };
-                    LOGARR.push(['Color - ' + data.Color.sku, data.colorval]);
-                    fromRunningtoReserved("Color/" + data.Color.sku, data.colorval);
+                    LOGARR.push(['Color - ' + data.recipe.Color.sku, data.colorval]);
+                    fromRunningtoReserved("Color/" + data.recipe.Color.sku, data.colorval);
 
                     toPremixColoring(data);
                 }
@@ -607,8 +602,8 @@ function assignMixture2(data) {
     } catch (e) {
         LOGARR.push(['Failed:', e.message]);
         var dat1 = {
-          final_status: "Not Run",
-          starttime: 0,
+          final_status: 0,
+          runtime: "",
         };
         base.updateData('Orders/' + data.batch, dat1);
         return {
@@ -632,7 +627,7 @@ function testNEWOrder() {
         orderdate: "2017-09-21",
         packaging: 1,
         packagingType: "1product pack",
-        priority: 9999,
+        priority: "",
         recipe: {
             cbd: '',
             name: "VG/PG : 40 / 60 Nicotine : 0MG",
@@ -721,9 +716,9 @@ function checkBatchExistsFlavourMixer(orders, batch, num) {
 function getNewOrderID() {
 
     var params = {
-        orderBy: 'orderID'
+        orderBy: ['orderID']
     }
-    var ordersByOrderID = base.getData('Orders', params);
+    var ordersByOrderID = JSONtoARR(base.getData('Orders', params));
     ordersByOrderID = ordersByOrderID.sort(sortOrderIDsHL)
     if (ordersByOrderID.length >= 1) {
         var LastorderID = ordersByOrderID[0].orderID;
@@ -808,7 +803,7 @@ function TESTORDERARR() {
             bottles: 700,
             packaging: '',
             orderdate: '2017-12-29',
-            priority: 9999,
+            priority: '',
             brand: 'VGO',
             customer: 'Blue Horse'
         },
@@ -831,7 +826,7 @@ function TESTORDERARR() {
             bottles: 500,
             packaging: 4,
             orderdate: '2017-12-29',
-            priority: 9999,
+            priority: '',
             brand: '13 Thieves',
             customer: 'Blue Horse'
         }
@@ -843,12 +838,11 @@ function saveOrderArray(arr) {
     Logger.log(arr);
     var msg = '';
     try {
-          var largestBatchRaw=base.getData('highestBatch'); 
-        var largestBatch=largestBatchRaw.batch;
-        var prods = base.getData('References');
+        var largestBatch = base.getData('highestBatch');
+        var prods = base.getData('References/ProductCodes');
         var rawOrders = base.getData('Orders');
 
-        var orders = base.getData('Orders');
+        var orders = JSONtoARR(base.getData('Orders'));
         var returnbatches = '';
         var customerSKU;
         var createdCustomer = false;
@@ -884,8 +878,8 @@ function saveOrderArray(arr) {
                 data.batch = '911000';
             }
             if (i == arr.length - 1) {
-                base.updateData('highestBatch/1', {
-                    'batch': parseInt(data.batch, 10)
+                base.updateData('', {
+                    'highestBatch': parseInt(data.batch, 10)
                 });
             }
 
@@ -898,7 +892,7 @@ function saveOrderArray(arr) {
                 user: Session.getActiveUser().getEmail(),
                 data: new Array()
             };
-            var prod = base.getData('References/' + data.productcode);
+            var prod = base.getData('References/ProductCodes/' + data.productcode);
             data.fill = prod.fill;
             data.boxname = prod.boxname;
             if (data.ppb) {
@@ -926,13 +920,13 @@ function saveOrderArray(arr) {
             data.premixed = 0;
             data.mixing = 0;
             data.backtubed = 0;
-            data.mixing_status = "";
-            data.production_status = "";
-            data.printing_status = "";
-            data.labeling_status = "";
-            data.packaging_status = "";
+            data.mixing_status = 0;
+            data.production_status = 0;
+            data.printing_status = 0;
+            data.labeling_status = 0;
+            data.packaging_status = 0;
             if (data.final_status) {} else {
-                data.final_status = "Not Run";
+                data.final_status = 0;
             }
             data.row = row;
             data.userset = false;
@@ -1032,12 +1026,7 @@ function saveOrderArray(arr) {
                 var colorvalue = (QTY * 10 * Color.val);
                 data.Color = Color;
                 data.colorval = colorvalue;
-            }else{
-              data.Color = {name:"",sku:"",val:0};
-              data.colorval = 0;
-              
             }
-
 
             base.updateData('Orders/' + batch, data);
 
@@ -1087,14 +1076,16 @@ function saveflavourmixOrder(data, edit) {
     };
     try {
         data.orderdate = new Date(data.orderdate).getTime();
-         
-        if (!data.final_status) {
-            data.final_status = "Not Run";
+        if (!data.movedtoNext) {
+            data.movedtoNext = 0;
         }
-       var rawMixes = base.getData('FlavourMixOrders');
+        if (!data.final_status) {
+            data.final_status = 0;
+        }
 
+        var rawMixes = base.getData('FlavourMixOrders');
         var mixes = JSONtoARR(rawMixes);
-     
+
         if (data.batch == '') {
             LOGDATA.status = false;
             LOGDATA.data.push(['FAILED:', 'NO BATCH NUMBER']);
@@ -1157,14 +1148,14 @@ function runflavourmixItem(batch, frombulk) {
     var missingmsg = '';
     var data = base.getData('FlavourMixOrders/' + batch);
     data.wentNegative = false;
-    data.final_status = 'Busy';
-    data.starttime = (new Date()).getTime();
+    data.final_status = 'started';
+    data.started = (new Date()).getTime();
 
     base.updateData('FlavourMixOrders/' + batch, data);
     var used = new Array();
     var flavourMix = base.getData('FlavourMixes/' + data.flavourmix.sku);
     data.fullMix = flavourMix;
-    var flavours = flavourMix.flavours;
+    var flavours = JSONtoARR(flavourMix.flavours);
     for (var i = 0; i < flavours.length; i++) {
         used.push(['Flavours/', flavours[i].sku, flavours[i].val * data.stocking / 10]);
         LOGDATA.data.push(['Flavour:', flavours[i].val * data.stocking / 10]);
@@ -1174,13 +1165,11 @@ function runflavourmixItem(batch, frombulk) {
             LOGDATA.data = LOGDATA.data.concat(returnData2(used, neg))
             logItem(LOGDATA);
             if (frombulk) {
-                data.final_status = "Not Run";
-                base.updateData('FlavourMixMixingTeam/' + data.batch, data);
                 return ['BREAK', 'MISSING: ' + LOGDATA.data[LOGDATA.data.length - 1][1]];
-              } else {
+            } else {
                 data.wentNegative = true;
                 data.started = 0;
-                data.final_status = "Not Run";
+                data.final_status = 0;
                 base.updateData('FlavourMixOrders/' + batch, data);
                 return 'MISSING: ' + LOGDATA.data[LOGDATA.data.length - 1][1];
             }
@@ -1188,7 +1177,7 @@ function runflavourmixItem(batch, frombulk) {
 
     }
     LOGDATA.data.push(['Sent to Mixing Team:', data.stocking]);
- 
+    data.final_status = 0;
     base.updateData('FlavourMixMixingTeam/' + data.batch, data);
 
     return ["","Success"];

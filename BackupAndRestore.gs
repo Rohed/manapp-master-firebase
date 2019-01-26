@@ -54,12 +54,9 @@ function restorePoint(filename) {
    return [false,'restorePoint'];
 }
 function restorePointPing(){
-//Utilities.sleep(20000);
-var restore = base.getData('restorepoint/1');
-if(!restore){
-return [false,'restorePoint'];
-}
-if(restore.status){
+Utilities.sleep(20000);
+var restore = base.getData('restorepoint');
+if(restore){
   return [true,'restorePoint', 'Restored.'];
 }
 return [false,'restorePoint'];
