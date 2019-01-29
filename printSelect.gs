@@ -404,7 +404,7 @@ function printOrdersBatches(SELECTED){
 
 
 function printxero(SELECTED){
-  
+  try{
   var orderIDs=[];
   var orderDates=[];
   var formattedDate = Utilities.formatDate(new Date(), "GMT", "dd-MM-yyyy");
@@ -423,8 +423,11 @@ function printxero(SELECTED){
     
     if(!data[i].recipe || (data[i].batch.toLowerCase().match('po')||data[i].batch.toLowerCase().match('pk'))){continue;}
     if(SELECTED.indexOf(data[i].orderID)>=0){
-      values.push([data[i].customer,'','','','','','','','','',data[i].orderID,'',formatDateDisplay(data[i].orderdate),'','',
-                   data[i].productcode,data[i].productdescription,data[i].bottles,'','','212 - Sales of Product Income','20% (VAT on Income)']);
+    var shipItem = base.getData("Shipping/"+data[i].batch);
+     var PC = base.getData("References/ProductCodes/"+data[i].productcode);
+    shipItem = shipItem? shipItem : {}
+      values.push([data[i].customer,'','','','','','','','','',data[i].orderID,shipItem.SHIPPINGCODE || "",formatDateDisplay(data[i].orderdate),shipItem.dateshipped || '','',
+                   data[i].productcode,data[i].productdescription,data[i].bottles,PC.price || '','','212 - Sales of Product Income','20% (VAT on Income)']);
       
     }
     
@@ -433,7 +436,10 @@ function printxero(SELECTED){
   
   sheet.getRange(2, 1, values.length, values[0].length).setValues(values);
   return 'Orders generated with the url: <br> <a  target="_blank" href="'+SS.getUrl()+'">'+SS.getName()+'</a>';
+  }catch(e){
   
+  return "Error Printing Xero: "+e.message;
+  }
 }
 
 

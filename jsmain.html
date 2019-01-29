@@ -3453,7 +3453,7 @@ $("#newbotlabel").html(labelsSelect);
 $("#newppbotlabel").html(labelsSelect);  
 $("#newpacklabel").html(labelsSelect);  
 $("#newpppacklabel").html(labelsSelect);  
-
+ 
 
 
 $("#updating").css("display", "none");
@@ -3498,6 +3498,7 @@ packlabel:$('#newpacklabel option:selected').text(),
 packlabelsku:$('#newpacklabel').val(),
 pppacklabel:$('#newpppacklabel option:selected').text(),
 pppacklabelsku:$('#newpppacklabel').val(),
+price:$('#newprice').val(),
 
 fill:parseInt($('#newPCDfill').val(),10),
 boxname:{
@@ -3818,7 +3819,7 @@ $("#editpremixSKUColored").val(oldPCD.premixSKUColored);
 $("#editpremixdescrColored").val(oldPCD.premixdescrColored); 
 $("#editunbrandSKU").val(oldPCD.unbrandSKU);  
  $("#editunbranddescr").val(oldPCD.unbranddescr);  
- 
+ $("#editprice").val(oldPCD.price);
 $("#ElinkedBB").val(oldPCD.linkedBB);
 $("#updating").css("display", "none");
 
@@ -3867,7 +3868,7 @@ packlabel:$('#editpacklabel option:selected').text(),
 packlabelsku:$('#editpacklabel').val(),
 pppacklabel:$('#editpppacklabel option:selected').text(),
 pppacklabelsku:$('#editpppacklabel').val(),
-
+price:$('#editprice').val(),
 fill:parseInt($('#editfill').val(),10),
 boxname:{
 sku:$('#editboxname').val(),
@@ -4114,34 +4115,7 @@ google.script.run.withSuccessHandler(populateCustomers).getCustomerList();
  function moveItems(origin, dest) {
 var child=$(origin).find(':selected');
     $(origin).find(':selected').appendTo(dest);
-//    if(xero_NOTE){
-//    if(child.length){
-//   var  childs=child;
-//   for(var i=0;i<childs.length;i++){
-//   if(origin=='#xrOne'){
-//   orderIDsDATABottom.push([$(childs[i]).attr('date'),$(childs[i]).val()]);
-//   orderIDsDATATop.splice(getIndex2($(childs[i]).val(),orderIDsDATATop), 1)
-//   
-//   }else{
-//   orderIDsDATATop.push([$(childs[i]).attr('date'),$(childs[i]).val()]);
-//   orderIDsDATABottom.splice(getIndex2($(childs[i]).val(),orderIDsDATABottom), 1)
-//   
-//   }
-//   }
-//    }else{
-//    if(origin=='#xrOne'){
-//    orderIDsDATABottom.push([$(child).attr('date'),$(child).val()]);
-//    orderIDsDATATop.splice(getIndex2($(child).val(),orderIDsDATATop), 1)
-//    
-//    }else{
-//    orderIDsDATATop.push([$(child).attr('date'),$(child).val()]);
-//    orderIDsDATABottom.splice(getIndex2($(child).val(),orderIDsDATABottom), 1)
-//    
-//    }
-//    }
-//        console.log('top',orderIDsDATATop)
-//     console.log('bottom',orderIDsDATABottom)
-//    }
+
 
 }
  
@@ -4149,22 +4123,7 @@ function moveAllItems(origin, dest) {
    var childs=$(origin).children();
     $(origin).children().appendTo(dest);
     console.log(childs);
-//    if(xero_NOTE){
-//    
-//     for(var i=0;i<childs.length;i++){
-//     if(origin=='#xrOne'){
-//     orderIDsDATABottom.push([$(childs[i]).attr('date'),$(childs[i]).val()]);
-//     orderIDsDATATop.splice(getIndex2($(childs[i]).val(),orderIDsDATATop), 1)
-//     
-//     }else{
-//     orderIDsDATATop.push([$(childs[i]).attr('date'),$(childs[i]).val()]);
-//     orderIDsDATABottom.splice(getIndex2($(childs[i]).val(),orderIDsDATABottom), 1)
-//     
-//     }
-//     }
-//         console.log('top',orderIDsDATATop)
-//     console.log('bottom',orderIDsDATABottom)
-//    }
+
 }
 
 var SHIPPING_NOTE=false;
