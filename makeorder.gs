@@ -25,6 +25,18 @@ function saveOrder(data, edit) {
                 var exists = base.getData("Orders/" + data.batch);
                 if (exists) {
                     return 'BATCH ' + data.batch + ' is already in the system.';
+                }else{
+                 var largestBatch=base.getData('highestBatch'); 
+                  if(largestBatch){
+                    if(largestBatch<parseInt(data.batch,10)){
+                      base.updateData('',{'highestBatch':parseInt(data.batch,10)});
+                    } 
+                    
+                  }else{
+                     base.updateData('',{'highestBatch':parseInt(data.batch,10)});
+                  }
+                  
+                
                 }
             }
         }

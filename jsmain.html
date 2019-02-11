@@ -3134,6 +3134,8 @@ function postNextFile() {
 function getSearchDates(data){
 console.log('data',data);
 var page=selPage;
+console.log('getsearachdates',page);
+if(page=='Functions'||page=='Reporting'){return;}
 if(page=='Mixing'){
 console.log('page');
 console.log(page);
@@ -3201,8 +3203,11 @@ var lastPage='';
 function filterResult(rett){
 
 console.log(rett);
+
 var page=rett[0];
-var data=rett[1];
+var data=rett[1] || [];
+console.log('page',page);
+if(page=='Finctions'||page==null){return;}
 data=getSearchDates(data);
 if(pagesSplit==false){
  data=splitPages([data,page]);

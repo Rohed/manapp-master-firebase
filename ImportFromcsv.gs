@@ -12,6 +12,10 @@ var d3=new Date(f3);
 d3=Utilities.formatDate(new Date(f3), "GMT", "dd-MM-yyyy");
 }
 
+function testgetlarges(){
+var orders = JSONtoARR(base.getData('Orders'));
+getLargestBatch(orders)
+}
 function getLargestBatch(orders){
 
    var largestBatch=base.getData('highestBatch'); 
@@ -21,7 +25,7 @@ function getLargestBatch(orders){
     ret= obj.batch;
     return ret;
   });
-  batches=batches.sort();
+  batches=batches.filter(function(item){ if(item !='undefined'){return true}}).sort();
   var largest= parseInt(batches[batches.length-1],10);
   if(largestBatch){
     if(largestBatch>largest){

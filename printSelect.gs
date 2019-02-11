@@ -1,3 +1,7 @@
+function testprintsafety(){
+
+Logger.log(printSafetyReports(['CBDMIX230','CBDMIX232']))
+}
 function printSafetyReports(SELECTED){
  
   var formattedDate = Utilities.formatDate(new Date(), "GMT", "yyyy-MM-dd");
@@ -34,7 +38,7 @@ function findTemplates(SELECTED,PC,premixes){
   var arr = [];
   for(var i = 0 ; i < SELECTED.length; i++){
     var found = false;
-    if(premixes[SELECTED[i]].name.toLowerCase().match('cbd')){
+    if(premixes[SELECTED[i]].name.toLowerCase().match('cbd') || SELECTED[i].toLowerCase().match('cbd')){
        arr.push('0');
        continue;
     }

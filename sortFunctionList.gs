@@ -276,7 +276,8 @@ function superSort2(key){
 
 
 function sortOrderIDs(a,b){
-
+if(!b.orderID){return 1};
+if(!a.orderID){return -1};
 var x=a.orderID.substr(4,a.orderID.length);
 var y=b.orderID.substr(4,b.orderID.length);
 if(!y){return 1};
@@ -286,7 +287,8 @@ return parseInt(x,10)-parseInt(y,10);
 
 }
 function sortOrderIDsHL(a,b){
-
+if(!b.orderID){return -1};
+if(!a.orderID){return 1};
 var x=a.orderID.substr(4,a.orderID.length);
 var y=b.orderID.substr(4,b.orderID.length);
 if(!y){return -1};
