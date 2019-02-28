@@ -539,11 +539,11 @@ function getBatchInfo(batches, key) {
 }
 
 function testDELANREV() {
-var batchInfo = getBatchInfo(['918709'],'reverse')[0];
-base.updateData('batchInfo',{'info':JSON.stringify(batchInfo)});
-//var batchInfo = JSON.parse(base.getData('batchInfo/info'))
-//Logger.log(batchInfo);
-//deleteAndReverse(batchInfo, 'deleteandreverse')
+//var batchInfo = getBatchInfo(['918709'],'deleteandreverse')[0];
+//base.updateData('batchInfo',{'info':JSON.stringify(batchInfo)});
+var batchInfo = JSON.parse(base.getData('batchInfo/info'))
+Logger.log(batchInfo);
+deleteAndReverse(batchInfo, 'deleteandreverse')
 }
 
 function deleteAndReverse(data, key) {
@@ -1019,14 +1019,14 @@ function reverseLineItemMove(sheetItem, order, item, sheet, key) {
         if (inPremixColoring) {
             var premix = getPremixSKU(order, true);
             if (inPremixColoring.final_status == 1) {
-                fromCompletedToRunning("Color/" + item.Color.sku, item.QTY * 10 * item.Color.val);
+                fromCompletedToRunning("Color/" + item.recipe.Color ? item.recipe.Color.sku : item.Color ? item.Color.sku : 'null', item.QTY * 10 * item.recipe.Color ? item.recipe.Color.val : item.Color ? item.Color.val : 0);
                 if (for_premixed_stock) {
                     removeFromRunning('PremixesTypes/' + premix, item.QTY);
                 } else {
                     fromCompletedToRunning('PremixesTypes/' + premix, order.coloredpremix);
                 }
             } else {
-                fromReservedToRunning("Color/" + item.Color.sku, item.QTY * 10 * item.Color.val);
+                fromReservedToRunning("Color/" + item.recipe.Color ? item.recipe.Color.sku : item.Color ? item.Color.sku : 'null', item.QTY * 10 * item.recipe.Color ? item.recipe.Color.val : item.Color ? item.Color.val : 0);
                 if (for_premixed_stock) {} else {
                     fromReservedToRunning('PremixesTypes/' + premix, order.coloredpremix);
                 }

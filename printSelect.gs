@@ -1,6 +1,6 @@
 function testprintsafety(){
 
-Logger.log(printSafetyReports(['CBDMIX230','CBDMIX232']))
+Logger.log(printSafetyReports(['GBMIX1159','GBMIX1167','GBMIX778','GBMIX779','GBMIX780','GBMIX781','GBMIX1310','GBMIX1311','GBMIX1312','GBMIX1312','GBMIX1307','GBMIX1308','GBMIX1309','GBMIX1295','GBMIX1165']))
 }
 function printSafetyReports(SELECTED){
  
@@ -15,10 +15,14 @@ function printSafetyReports(SELECTED){
     var data=premixes[SELECTED[i]];
     if(used[i] === false){notFoundMSG+='<br> '+SELECTED[i]; continue;}
     if(!data){notFoundMSG+='<br> '+SELECTED[i]; continue;}
-    if(!SAFETYREPORTS[used[i]]){notFoundMSG+='<br> '+SELECTED[i]; continue;}
+    if(!SAFETYREPORTS[used[i]]){
+        notFoundMSG+='<br> '+SELECTED[i]; continue;
     
+    }
     
-    var create=DriveApp.getFileById(SAFETYREPORTS[used[i]]).makeCopy(SELECTED[i]+' '+formattedDate+' Safety Report',folder);
+    var fileID =SAFETYREPORTS[used[i]];
+    
+    var create=DriveApp.getFileById(fileID).makeCopy(SELECTED[i]+' '+formattedDate+' Safety Report',folder);
     var file=DocumentApp.openById(create.getId());
     file.replaceText('<<NAME>>',data.name);
     file.replaceText('<<SKU>>',data.sku);
