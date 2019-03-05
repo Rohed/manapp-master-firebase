@@ -8,7 +8,80 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
-    .modal-content {
+    .highlight{
+    background-color:#1a73e8;
+    width: 30px;
+    height: 30px;
+    margin:auto;
+    }
+.sarButton {
+    margin: 20px;
+}
+     .add-note-inner__notes {
+  -ms-flex: 0 0 85%;
+  flex: 0 0 85%;
+  overflow-y: scroll;
+    height: 300px;
+  overflow: auto;
+  
+}
+.add-note-inner__notes textarea {
+  border: none;
+  background: none;
+  width: 100%;
+  
+  
+  padding: 10px;
+  font-size: 18px;
+
+}
+.add-note-inner__notes textarea:focus {
+  outline: 0;
+}  
+
+.note-line-textarea {
+  /* padding: 10px 0px 10px 0px; */
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(202, 202, 202);
+}
+.note-line-fixed {
+min-height:100px;
+  padding-top: 10px; 
+   display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(202, 202, 202);
+}
+.note-text {
+  width: 75%;
+  font-size: 1.6rem;
+ display:inline-block;
+  padding: 10px;
+}
+
+.note-timestamp { 
+  width: 20%;
+  padding: 0 0 0 20px;
+  font-size: 1.2rem;
+  color: #777;
+  margin: 0;
+   display:inline-block;
+}
+.note-timestamp2 { 
+
+  font-size: 1rem;
+  color: #777;
+  margin: 0;
+   display:inline-block;
+}
+
+ .flex{
+ padding:60px 0 60px 0;
+ display:flex;
+ justify-content:space-between;
+ 
+ }
+ .modal-content {
   position: relative;
   background-color: #fff;
   -webkit-background-clip: padding-box;
@@ -17,8 +90,10 @@
   border: 0;
   border-radius: 0;
   outline: 0;
-  max-height: 500px;
+  max-height: 800px;
   overflow: scroll;
+  overflow-x: auto;
+  min-width:900px;
 }
         
     .bold td{
@@ -225,6 +300,7 @@ display: inline-block;
             background: #b2b7ba;
             display: none;
             position: fixed;
+             z-index:20;
             top: 0;
             right: 0;
             bottom: 0;
@@ -232,6 +308,23 @@ display: inline-block;
             opacity: 0.5;
             height: 100%;
             width: 100;
+        }
+        
+         .modal{
+        
+        overflow:scroll;
+        }
+        .modallarge {
+            width: 1500px;
+            right: 500px;
+        }
+        .modal-header{
+          margin:20px;
+          border:none;
+        }
+        .modal-footer{
+          margin:20px;
+          border:none;
         }
 /*
 .modal.show .modal-dialog {
@@ -759,6 +852,7 @@ width: 100%;
       
 </body>
   <script>
+   getNotesGlobal();
   function formatDateDisplay(datems){
      try{
      if(datems&&datems!=""){
@@ -1179,6 +1273,8 @@ addToSelected(href.substr(7, href.length));
 removeFromInventory(href.substr(10, href.length), page);
 }  else if (href.substr(0, 9) == '#editItem') {
 editItem(href.substr(9, href.length), page);
+}else if(href.substr(0,8) == '#orderID'){
+selectNotesForBatch(href.substr(8, href.length));
 }
 
 return false;
@@ -1200,12 +1296,12 @@ return false;
         thisData=data;
         thisPage='Orders';
         var html = '';
-        html += '<table class="table"><thead><tr><th>Row</th><th>Menu</th><th>Move</th><th>Order Date</th><th>Started</th><th>Production Machine</th><th>Labelling Machine</th><th>Batch</th><th>Order ID</th><th>Code</th><th>Description</th><th>Priority</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Flavour</th><th>Bottles</th><th>Stocking Amount (litre)</th><th>Bottle Type</th><th>Lid Type</th><th>Pack Type</th>';
+        html += '<table class="table"><thead><tr><th>Row</th><th>Menu</th><th>Notes</th><th>Move</th><th>Order Date</th><th>Started</th><th>Production Machine</th><th>Labelling Machine</th><th>Batch</th><th>Order ID</th><th>Code</th><th>Description</th><th>Priority</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Flavour</th><th>Bottles</th><th>Stocking Amount (litre)</th><th>Bottle Type</th><th>Lid Type</th><th>Pack Type</th>';
         html += '<th>QTY</th><th>Flavour Value</th><th>VG Value</th><th>AG Value</th><th>PG Value</th><th>Nicotine Value</th><th>Nicotine Salts Value</th><th>CBD Value</th><th>MCT Value</th><th>Backed by Mixing</th>';
         html+='<th>Backed by Premixed</th><th>Backed by Unbranded</th><th>Backed by Branded</th><th>Backed By Branded Packaged</th><th>Mixing Status</th><th>Production Status</th><th>Printing Status</th><th>Labelling Status</th>';
         html += '<th>Packaging Status</th><th>FINAL STATUS</th><th>Partial Production</th><th>Partial Packaging</th></tr>';
         
-        html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal'+thisPage+'"></div></th><th><div>STOCKING TOTAL</div><div id="stockingTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th><div>QTY TOTAL</div><div id="qtyTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th></th><th></th>';
+        html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal'+thisPage+'"></div></th><th><div>STOCKING TOTAL</div><div id="stockingTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th><div>QTY TOTAL</div><div id="qtyTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th></th><th></th>';
         html += '<th></th><th></th><th></th><th><div>MIXING TOTAL</div><div id="mixingTotal'+thisPage+'"></div></th><th><div>PREMIX TOTAL</div><div id="premixTotal'+thisPage+'"></div></th><th><div>UNBRANDED TOTAL</div><div id="unbrandedTotal'+thisPage+'"></div></th><th><div>BRANDED TOTAL</div><div id="brandedTotal'+thisPage+'"></div></th><th><div>TUBES TOTAL</div><div id="tubesTotal'+thisPage+'"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><tr>';
       if(data){
         var keys=['orderdate','runtime','machineP','machineL','batch','orderID','productcode','productdescription','priority','customer','brand','recipe.name','flavour.name','bottles','stocking','btype','lid','packagingType.name','QTY','flavvalue','VGval','AGval','PGval','Nico','Nicosalts','CBDvalue','MCTval','mixing','premixed',
@@ -1267,11 +1363,18 @@ return false;
 
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" id="select'+data[i].batch+'" href="#select' + data[i].batch + '">Select</a>';
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" style="display:none;" id="deselect'+data[i].batch+'" href="#select' + data[i].batch + '">Deselect</a>';
-
+   
+        html += '<a class="dropdown-item"   value="'+ data[i].orderID +'" onclick="return menuClick(this);" href="#orderID' + data[i].orderID + '">Notes</a>';
+     
 
          //   }
 
             html += ' </div></div></td>';  
+            if(notesGlobalObj[data[i].orderID]){
+            html += '<td><div class="highlight"></div></td>';
+            }else{
+            html += '<td><div></div></td>';
+            }
             html += '<td></td>';
              data[i].runtime=data[i].runtime ? data[i].runtime: ' ';
             html += '<td>' + formatDateDisplay(data[i].orderdate) + '</td><td>' + formatDateDisplay2(data[i].runtime) + '</td>';
@@ -1552,8 +1655,8 @@ $('#rowsTotal').html(rowsTotal);
         thisPage='PremixColoring';
         console.log(data);
         var html = '';
-     var heads=['Row','Menu','Batch','Order Date','Started','QTY','Color','Color SKU','Color %','Mix Batch Code','Uncolored Premix Description','Uncolored Premix SKU','Colored Premix Description','Colored Premix SKU','Status','Completion Date','Notes','Location'];
-        var keys=['row','menu','batch','orderdate','starttime','QTY','Color.name','Color.sku','Color.val','mix_batch_code','premixdescr','premixSKU','premixdescrColored','premixSKUColored','final_status','CompletionDate','Notes','Location']
+     var heads=['Row','Menu','Notes','Batch','Order Date','Started','QTY','Color','Color SKU','Color %','Mix Batch Code','Uncolored Premix Description','Uncolored Premix SKU','Colored Premix Description','Colored Premix SKU','Status','Completion Date','Notes','Location'];
+        var keys=['row','menu','notes','batch','orderdate','starttime','QTY','Color.name','Color.sku','Color.val','mix_batch_code','premixdescr','premixSKU','premixdescrColored','premixSKUColored','final_status','CompletionDate','Notes','Location']
         html += '<table class="table"><thead><tr>';
         for(var i=0;i<heads.length;i++){
           html+= '<th>'+heads[i]+'</th>';
@@ -1587,9 +1690,18 @@ $('#rowsTotal').html(rowsTotal);
                 
                 html+='<a class="dropdown-item" onclick="return menuClick(this);" page="PremixColoring" href="#setBusy'+data[i].batch+'">Mark Busy</a>';
                 }  
+          
+        html += '<a class="dropdown-item"   value="'+ data[i].orderID +'" onclick="return menuClick(this);" href="#orderID' + data[i].orderID + '">Notes</a>';
+      
                 html += '</div></div></td>';  
                 }else if(keys[j]=='row'){
                 html+= '<td>'+i+'</td>';
+                }else if(keys[j]=='notes'){
+                if(notesGlobalObj[data[i].orderID]){
+                html += '<td><div class="highlight"></div></td>';
+                }else{
+                html += '<td><div></div></td>';
+                }
                 }else if(keys[j]=='Color.name'){
                 html+= '<td>'+data[i].Color.name+'</td>';
                 }else if(keys[j]=='Color.sku'){
@@ -1629,11 +1741,11 @@ var rowsTotal=0;
         var unbrandedTotal=0;
         var brandedTotal=0;
 var tubesTotal=0;
-html+='<table class="table"><thead><tr><th>Menu</th><th>Move</th><th>Mixing Completed</th><th>Order Date</th><th>Batch</th><th>Machine</th><th>Order ID</th><th>Priority</th><th>Description</th><th>Mix Batch Code</th><th>Brand</th><th>Recipe</th><th>Flavour</th>';
+html+='<table class="table"><thead><tr><th>Menu</th><th>Notes</th><th>Move</th><th>Mixing Completed</th><th>Order Date</th><th>Batch</th><th>Machine</th><th>Order ID</th><th>Priority</th><th>Description</th><th>Mix Batch Code</th><th>Brand</th><th>Recipe</th><th>Flavour</th>';
 html+='<th>Bottles</th><th>Bottle Type</th><th>Lid Type</th><th>Location</th>';
 html+='<th>Backed By Mixing</th><th>Backed By Premix</th><th>Backed By Unbranded</th><th>Backed By Branded</th><th>Backed By Branded Packaged</th>';
 html += '</tr>';
-html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th>';
+html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th>';
 html += '</th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal"></div></th><th></th><th></th><th></th><th><div>MIXING TOTAL</div><div id="mixingTotal"></div></th><th><div>PREMIX TOTAL</div><div id="premixTotal"></div></th><th><div>UNBRANDED TOTAL</div><div id="unbrandedTotal"></div></th><th><div>BRANDED TOTAL</div><div id="brandedTotal"></div></th></th><th><div>TUBES TOTAL</div><div id="tubesTotal"></div></th></tr>';
 
  if(data){
@@ -1686,8 +1798,15 @@ html+='<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="m
 
    html += '<a class="dropdown-item" onclick="return menuClick(this);" id="select'+data[i].batch+'" href="#select' + data[i].batch + '">Select</a>';
             html += '<a class="dropdown-item" onclick="return menuClick(this);" style="display:none;" id="deselect'+data[i].batch+'" href="#select' + data[i].batch + '">Deselect</a>';
-            
+   
+        html += '<a class="dropdown-item"   value="'+ data[i].orderID +'" onclick="return menuClick(this);" href="#orderID' + data[i].orderID + '">Notes</a>';
+                 
 html+=' </div></div></td>';
+   if(notesGlobalObj[data[i].orderID]){
+                html += '<td><div class="highlight"></div></td>';
+                }else{
+                html += '<td><div></div></td>';
+                }
    html += '<td></td>';
 
      
@@ -1761,10 +1880,10 @@ var html='';
       var botlabels=0;
     var tubelabels=0;
 
-        html += '<table class="table"><thead><tr><th>Menu</th><th>Move</th><th>Production Status</th><th>Order Date</th><th>Batch</th><th>Priority</th><th>Bottle Labels QTY</th><th>Cylinder Labels QTY</th><th>Exp. Date</th><th>Label</th><th>Order ID</th><th>Description</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Flavour</th>';
+        html += '<table class="table"><thead><tr><th>Menu</th><th>Notes</th><th>Move</th><th>Production Status</th><th>Order Date</th><th>Batch</th><th>Priority</th><th>Bottle Labels QTY</th><th>Cylinder Labels QTY</th><th>Exp. Date</th><th>Label</th><th>Order ID</th><th>Description</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Flavour</th>';
 html+='<th>Bottles</th><th>Bottle Type</th><th>Pack Type</th><th>Location</th>';
 html += '</tr>';
-html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLE LABELS TOTAL</div><div id="numLabelsBottlesTotal"></div></th><th><div>PACK LABELS TOTAL</div><div id="numLabelsTubesTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal">';
+html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLE LABELS TOTAL</div><div id="numLabelsBottlesTotal"></div></th><th><div>PACK LABELS TOTAL</div><div id="numLabelsTubesTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal">';
 html += '</div></th><th></th><th></th></th></th></tr>';
        if(data){
          var keys=['production_status','orderdate','batch','priority','numLabelsBottles','numLabelsTubes','expDate','botlabel','orderID','productdescription','customer','brand','recipe.name','flavour.name','bottles','btype','packagingType.name','Location'];
@@ -1812,10 +1931,16 @@ html += '</div></th><th></th><th></th></th></th></tr>';
          }
          }
          
-         
+           
+        html += '<a class="dropdown-item"   value="'+ data[i].orderID +'" onclick="return menuClick(this);" href="#orderID' + data[i].orderID + '">Notes</a>';
+       
          
          html+=' </div></div></td>';
-         
+            if(notesGlobalObj[data[i].orderID]){
+                html += '<td><div class="highlight"></div></td>';
+                }else{
+                html += '<td><div></div></td>';
+                }
          html += '<td><button page="Printing" batch="'+data[i].batch+'" onclick="moveUp(this)" id="moveUP"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>';
          html += '<button onclick="moveDown(this)" page="Printing" batch="'+data[i].batch+'" id="moveDOWN"><i class="fa fa-arrow-down" aria-hidden="true"></i></button></td>';
  data[i].priority=data[i].priority ? data[i].priority: ' ';
@@ -1858,11 +1983,11 @@ var html='';
         var rowsTotal=0;
 
 
-html+='<table class="table"><thead><tr><th>Menu</th><th>Move</th><th>Production Status</th><th>Order Date</th><th>Batch</th><th>Order ID</th<th>Priority</th>><th>Code</th><th>Description</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Flavour</th>';
+html+='<table class="table"><thead><tr><th>Menu</th><th>Notes</th><th>Move</th><th>Production Status</th><th>Order Date</th><th>Batch</th><th>Order ID</th<th>Priority</th>><th>Code</th><th>Description</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Flavour</th>';
 html+='<th>Bottles</th><th>Bottle Type</th><th>Lid Type</th><th>Pack Type</th><th>Start Date</th><th>Completion Date</th><th>Production Completed</th><th>Location</th><th>Machine</th>';
 html+='<th>Backed By Mixing</th><th>Backed By Premix</th><th>Backed By Unbranded</th><th>Backed By Branded</th>';
         html += '</tr>';
-        html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>MIXING TOTAL</div><div id="mixingTotal"></div></th><th><div>PREMIX TOTAL</div><div id="premixTotal"></div></th><th><div>UNBRANDED TOTAL</div><div id="unbrandedTotal"></div></th><th><div>BRANDED TOTAL</div><div id="brandedTotal"></div></th></th></th><th><div>TUBES TOTAL</div><div id="tubesTotal"></div></th></tr>';
+        html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>MIXING TOTAL</div><div id="mixingTotal"></div></th><th><div>PREMIX TOTAL</div><div id="premixTotal"></div></th><th><div>UNBRANDED TOTAL</div><div id="unbrandedTotal"></div></th><th><div>BRANDED TOTAL</div><div id="brandedTotal"></div></th></th></th><th><div>TUBES TOTAL</div><div id="tubesTotal"></div></th></tr>';
         
                
          if(data){
@@ -1910,8 +2035,15 @@ if(data[i].movedtoNext != 'Busy'){
 html+='<a class="dropdown-item" onclick="return menuClick(this);" page="Labelling" href="#setBusy'+data[i].batch+'">Mark Busy</a>';
 }
 }
-
+    
+        html += '<a class="dropdown-item"   value="'+ data[i].orderID +'" onclick="return menuClick(this);" href="#orderID' + data[i].orderID + '">Notes</a>';
+        
 html+=' </div></div></td>';
+   if(notesGlobalObj[data[i].orderID]){
+                html += '<td><div class="highlight"></div></td>';
+                }else{
+                html += '<td><div></div></td>';
+                }
    html += '<td></td>';
 
  data[i].priority=data[i].priority ? data[i].priority: ' ';
@@ -1964,12 +2096,12 @@ var html='';
         var bottlesTotal=0;
         var rowsTotal=0;
 
-html+='<table class="table"><thead><tr><th>Menu</th><th>Move</th><th>Production Status</th><th>Printing Status</th><th>Order Date</th><th>Batch</th><th>Order ID</th><th>Priority</th><th>Code</th><th>Description</th><th>Packaging Code</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Flavour</th>';
+html+='<table class="table"><thead><tr><th>Menu</th><th>Notes</th><th>Move</th><th>Production Status</th><th>Printing Status</th><th>Order Date</th><th>Batch</th><th>Order ID</th><th>Priority</th><th>Code</th><th>Description</th><th>Packaging Code</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Flavour</th>';
 html+='<th>Bottles</th><th>Bottle Type</th><th>Lid Type</th><th>Pack Type</th><th>Start Date</th><th>Completion Date</th><th>Packaging Completed</th><th>Location</th>';
 html+='<th>Backed By Mixing</th><th>Backed By Premix</th><th>Backed By Unbranded</th><th>Backed By Branded</th>';
         html += '</tr>';
         
-        html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>MIXING TOTAL</div><div id="mixingTotal"></div></th><th><div>PREMIX TOTAL</div><div id="premixTotal"></div></th><th><div>UNBRANDED TOTAL</div><div id="unbrandedTotal"></div></th><th><div>BRANDED TOTAL</div><div id="brandedTotal"></div></th></th></th><th><div>TUBES TOTAL</div><div id="tubesTotal"></div></th></tr>';
+        html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>MIXING TOTAL</div><div id="mixingTotal"></div></th><th><div>PREMIX TOTAL</div><div id="premixTotal"></div></th><th><div>UNBRANDED TOTAL</div><div id="unbrandedTotal"></div></th><th><div>BRANDED TOTAL</div><div id="brandedTotal"></div></th></th></th><th><div>TUBES TOTAL</div><div id="tubesTotal"></div></th></tr>';
                  if(data){
          var keys=['production_status','printing_status','orderdate','batch','orderID','priority','productcode','productdescription','PRINTCODE','customer','brand','recipe.name','flavour.name','bottles','btype','lid','packagingType.name','starttime','CompletionDate','Completed','Location','mixing','premixed','unbranded','branded','backtubed'];
          var drpdowns='';
@@ -2019,8 +2151,15 @@ html+='<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="m
 
    html += '<a class="dropdown-item" onclick="return menuClick(this);" id="select'+data[i].batch+'" href="#select' + data[i].batch + '">Select</a>';
             html += '<a class="dropdown-item" onclick="return menuClick(this);" style="display:none;" id="deselect'+data[i].batch+'" href="#select' + data[i].batch + '">Deselect</a>';
-            
+      
+        html += '<a class="dropdown-item"   value="'+ data[i].orderID +'" onclick="return menuClick(this);" href="#orderID' + data[i].orderID + '">Notes</a>';
+                  
 html+=' </div></div></td>';
+   if(notesGlobalObj[data[i].orderID]){
+                html += '<td><div class="highlight"></div></td>';
+                }else{
+                html += '<td><div></div></td>';
+                }
    html += '<td></td>';
 
  data[i].priority=data[i].priority ? data[i].priority: ' ';
@@ -2414,9 +2553,9 @@ google.script.run.withSuccessHandler(newItemSuccess).runBusy(batch,page);
     thisPage='Shipping';
  var bottlesTotal=0;
  var rowsTotal=0;
-       html += '<table class="table table-striped"><thead><tr><th>Menu</th><th>Order Date</th><th>Batch</th><th>Order ID</th><th>Code</th><th>Description</th><th>Priority</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Packaging Code</th><th>Flavour</th><th>Bottles</th><th>Bottle Type</th><th>Lid Type</th><th>Pack Type</th>';
+       html += '<table class="table table-striped"><thead><tr><th>Menu</th><th>Notes</th><th>Order Date</th><th>Batch</th><th>Order ID</th><th>Code</th><th>Description</th><th>Priority</th><th>Customer</th><th>Brand</th><th>Recipe</th><th>Packaging Code</th><th>Flavour</th><th>Bottles</th><th>Bottle Type</th><th>Lid Type</th><th>Pack Type</th>';
         html += '<th>Status</th><th>Shipping Status</th><th>Shipping Code</th><th>Date Shipped</th><th>Tracking No.</th><th>Date Delivered</th><th>Location</th></tr>';
-       html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>';
+       html += '<tr><th><div>ROWS TOTAL</div><div id="rowsTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th><div>BOTTLES TOTAL</div><div id="bottlesTotal"></div></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>';
        if(data){
         var keys=['orderdate','batch','orderID','productcode','productdescription','priority','PRINTCODE','customer','brand','recipe.name','flavour.name','bottles','btype','lid','packagingType.name','final_status','shipping_status','SHIPPINGCODE','dateshipped','trackingNo','datedelivered', 'Location'];
         var drpdowns='';
@@ -2453,9 +2592,15 @@ google.script.run.withSuccessHandler(newItemSuccess).runBusy(batch,page);
 
             html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deleteShipping' + data[i].batch + '">Delete Batch</a>';
             html += '<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal3" href="#editShipping' + data[i].batch + '">Edit</a>';
-
+     
+                html += '<a class="dropdown-item"   value="'+ data[i].orderID +'" onclick="return menuClick(this);" href="#orderID' + data[i].orderID + '">Notes</a>';
+           
             html += ' </div></div></td>';
-            
+               if(notesGlobalObj[data[i].orderID]){
+                html += '<td><div class="highlight"></div></td>';
+                }else{
+                html += '<td><div></div></td>';
+                }
              data[i].priority=data[i].priority ? data[i].priority: ' ';
             html += '<td>' + formatDateDisplay(data[i].orderdate) + '</td><td>' + data[i].batch + '</td><td>' + data[i].orderID + '</td><td>' + data[i].productcode + '</td><td>' + data[i].productdescription + '</td><td>' + data[i].priority + '</td><td>' + data[i].customer + '</td><td>' + data[i].brand + '</td>';
             html += '<td>' + data[i].recipe.name + '</td><td>' + data[i].PRINTCODE + '</td><td>' + data[i].flavour.name + '</td><td>' + data[i].bottles + '</td><td>' + data[i].btype + '</td><td>' + data[i].lid + '</td>';
@@ -3677,6 +3822,9 @@ switch (type){
     case 'PackagePrint':
     built= buildPackagePrint(data);
     break;
+    case 'notesModal':
+    built= buildNotesModal(data);
+    break;
   default:
 
   break;
@@ -3787,6 +3935,191 @@ var html='<div>\
 
 html+='</div>';
 return html;
+}
+
+function htmlModalMSG(msg){
+buildhtmlmodal([msg,'htmlMSG'])
+  
+}
+function buildHtmlMsg(msg){
+var html='<div  class="container">'+msg+'</div>';
+
+return html;
+}
+
+
+//NOTES
+
+var notesGlobal=[];
+var notesGlobalObj=[];
+var selectedNote = false;
+function showNotes(){
+google.script.run.withSuccessHandler(buildhtmlmodal).getNotesList();
+
+}
+
+function getNotesGlobal(){
+
+google.script.run.withSuccessHandler(setNotesGlobal).getNotesObj();
+}
+
+function setNotesGlobal(data){
+notesGlobalObj = data;
+console.log(notesGlobalObj)
+}
+function buildOrderIDsList(list){
+
+//console.log(list);
+var html='';
+for(var i=0;i<list.length;i++){
+html+='<div value="'+list[i][0]+'" onClick="selectNotesForOrder(this)" >'+list[i][0]+' - Last Change: '+formatDateDisplay2(list[i][1])+'</div>';
+}
+return html;
+}
+function buildNotesModal(list){
+notesGlobal = list;
+var html = '';
+html+='<div class="container">\
+<div>\
+<p>Select an Order ID</p>\
+<div class="form-group">\
+<div  style="height:200px; overflow:auto;" >\
+'+buildOrderIDsList(list)+'\
+</div>\
+</div>\
+<br />\
+<br />\
+<div class="form-group"  id="noteTextHolder"  style="height:340px; display:none;">\
+<p>Selected: <span id="selectedOrderID"></span><button type="button" class="btn btn-success sarButton" onclick="saveNote()">Save</button></p>\
+<div  >\
+<div class="add-note-inner__notes">\
+<div class="note-line-textarea">\
+<textarea id="noteTextBox" rows="3"  ></textarea>\
+</div>\
+<div class="notes-container" id="notesContainer"></div>\
+</div>\
+</div>\
+</div>\
+</div>';
+
+return html;
+}
+function buildNotesList(list){
+$("#updating").css("display", "block");
+//console.log(list);
+var html='';
+list = list.sort(function(a,b){
+return b.timestamp - a.timestamp
+});
+for(var i=0;i<list.length;i++){
+html+="<div class='note-line-fixed'>\
+              <div class='note-text'>";
+              if(list[i].text){ 
+              var textarr = list[i].text.split('\n');
+              for(var j = 0; j<textarr.length; j++){
+               html+= "<span>"+textarr[j]+"<br /></span>"
+              
+              }
+           
+                }
+                
+                html+="<div class='note-timestamp2'><span>";
+                html+=(list[i].selPage || '') + ' - ' +(list[i].user || '');
+                html+="</span></div>";  
+              html+="</div>\
+              <div class='note-timestamp'>\
+                <span>";
+               html+=formatDateDisplay2(list[i].timestamp);
+              html+="</span>\
+              </div>\
+            </div>";
+}
+
+$("#notesContainer").html(html);
+        
+$("#noteTextHolder").css("display", "block");
+$("#updating").css("display", "none");
+}
+
+
+function selectNotesForOrder(event){
+
+var orderID = $(event).attr('value');
+selectedNote = orderID;
+var notes = notesGlobal.filter(function(item){
+return item[0] == orderID
+})[0];
+var list = JSONtoARR(notes[2]);
+buildNotesList(list)
+
+$("#selectedOrderID").html(orderID);
+}
+
+function selectNotesForBatch(orderID){
+$("#updating").css("display", "block");
+showNotes();
+setTimeout(function() { 
+
+selectedNote = orderID;
+var notes = notesGlobal.filter(function(item){
+return item[0] == orderID
+})[0];
+var list = JSONtoARR(notes[2]);
+buildNotesList(list)
+
+$("#selectedOrderID").html(orderID);
+$("#updating").css("display", "none");
+ return false;
+}, 10000);
+
+}
+function saveNote(){
+var text =$("#noteTextBox").val();
+
+
+google.script.run.withSuccessHandler(refreshNotes).saveNote(selectedNote,text,selPage);
+}
+ 
+function refreshNotes(data){
+var newNote =data[0];
+var msg= data[1];
+var err = data[2];
+alert(msg);
+if(!err){
+var newNotes = notesGlobal.map(function(item){
+if(item[0] == selectedNote){
+item[2] = newNote.notes;
+return item;
+}else{
+return item;
+}
+
+});
+notesGlobal = newNotes;
+
+console.log('notes',list)
+var list = JSONtoARR(newNote.notes).sort(function(a,b){
+return b.timestamp - a.timestamp
+});
+buildNotesList(list)
+$("#noteTextBox").html('')
+$("#noteTextBox").val('')
+$("#selectedOrderID").html(selectedNote);
+getNotesGlobal();
+}
+}
+
+function JSONtoARR(data) {
+    if (data) {
+    var result = Object.keys(data).map(function(key) {
+      return data[key];
+    });
+    
+    return result;
+  } else {
+        return [];
+    }
+
 }
 </script>
 

@@ -190,7 +190,7 @@ for(var j=0;j<tabs.length;j++){
         var data=getShippingData();
            if(!data){continue;}
             var headerRow=['Order Date','Batch','Order ID','Product Code','ProductDescription','Priority','Customer','Brand','Recipe','Packaging Code','Flavour','Bottles','Bottle Type','Lid Type',
-     'Packaging Tube','Status','Shipping Status','Shipping Code','Date Shipped','Tracking No.','Date Delivered','Location'];
+     'Packaging Tube','Status','Shipping Status','Shipping Code','Date Shipped','Tracking No.','Date Delivered','Location','Partial Production','Partial Packaging'];
 
        var values=[];
       values.push(headerRow);
@@ -200,7 +200,7 @@ for(var j=0;j<tabs.length;j++){
        data[i].boxname?data[i].boxname.name||(data[i].boxname={name:"",sku:""}):data[i].boxname={name:"",sku:""},data[i].packagingType?data[i].packagingType.name||(data[i].packagingType={name:"",sku:""}):data[i].packagingType={name:"",sku:""};
       values.push([formatDateDisplay(data[i].orderdate),data[i].batch,data[i].orderID,data[i].productcode,data[i].productdescription,data[i].priority,data[i].customer,data[i].brand,data[i].recipe.name,data[i].PRINTCODE,data[i].flavour.name,data[i].bottles,
       data[i].btype,data[i].lid,data[i].packagingType.name,data[i].final_status,data[i].shipping_status ,data[i].SHIPPINGCODE,data[i].dateshipped,data[i].trackingNo,
-      data[i].datedelivered,data[i].shippinglocation]);
+      data[i].datedelivered,data[i].shippinglocation,(data[i].partialProduction||''),(data[i].partialPackaging||'')]);
       }
       var sheet=file.insertSheet('Shipping');
       sheet.getRange(1, 1, values.length, values[0].length).setValues(values);

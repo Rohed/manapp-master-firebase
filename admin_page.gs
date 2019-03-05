@@ -42,6 +42,7 @@ function getSearchBoxKeys(page) {
         ['Lids', 'Cap Type', 'lidSKU'],
         ['Packages', '	Pack Type', 'packagingType/name'],
         ['priority', 'Priority', 'priority'],
+        ['notes', 'Notes', 'notes'],
 
     ];
 
@@ -54,6 +55,12 @@ function getSearchValues(page, DBpage, key, num) {
         arr = [page, [], 'word', num];
     } else if (DBpage == 'priority'){
         arr = [page, [], 'priority', num];
+    } else if (DBpage == 'notes'){
+         arr = [page, [{
+            name: 'Have Notes'
+        }, {
+            name: "Don't Have Notes"
+        }], 'final_status', num];
     } else if (DBpage == 'final_status') {
         arr = [page, [{
             name: 'Completed'
@@ -954,6 +961,28 @@ var forord=false;
             if (data[i].priority==params.equalTo) {
               arr.push(data[i]);
             }
+          }
+          return [page, arr];
+          
+          
+        
+        
+        } else if(params.orderBy == 'notes'){
+          var notes  = getNotesObj();
+          var data = JSONtoARR(base.getData(page));
+          var arr = [];
+          for (var i = 0; i < data.length; i++) {
+            if(params.equalTo == 'Have Notes' && notes[data[i].orderID]){
+              
+              arr.push(data[i]);
+              
+              
+            }else if(params.equalTo == "Don't Have Notes"  && !notes[data[i].orderID]){
+              
+              arr.push(data[i]);
+              
+            }
+            
           }
           return [page, arr];
           

@@ -35,7 +35,7 @@ function makeKEYSARR(){
   }
   Logger.log(fullKEYSARR);
 }
-var keys=[['orderdate', 'date'], ['starttime', 'num'], ['machineP', 'string'], ['machineL', 'string'], ['batch', 'num'],['fill', 'num'], ['orderID', 'special'], ['productcode', 'string'],
+var keys=[['orderdate', 'date'],['notes', 'exists'], ['starttime', 'num'], ['machineP', 'string'], ['machineL', 'string'], ['batch', 'num'],['fill', 'num'], ['orderID', 'special'], ['productcode', 'string'],
 ['productdescription', 'string'], ['priority', 'num'], ['customer', 'string'], ['brand', 'string'], ['recipe.name', 'string'], ['flavour.name', 'string'], ['bottles', 'num']
 , ['stocking', 'num'], ['btype', 'string'], ['lid', 'string'], ['packagingType.name', 'string'], ['QTY', 'num'], ['flavvalue', 'num'], ['VGval', 'num'], ['AGval', 'num'], ['PGval', 'num'],
 ['Nico', 'num'],['Nicosalts', 'num'], ['CBDvalue', 'num'], ['mixing', 'num'], ['premixed', 'num'], ['unbranded', 'num'], ['branded', 'num'], ['backtubed', 'num'], ['mixing_status', 'string'],
