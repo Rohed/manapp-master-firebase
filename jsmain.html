@@ -6910,8 +6910,11 @@ var html = '';
 html+='<div class="container">\
 <div>\
 <p>Select an Order ID</p>\
+<div>\
+<select class="form-control" id="notesOrderIDSelect" onchange="setListSorted(this)" ><option value="All" selected>All</option><option value="dont">Don\'t Have Notes</option><option value="have">Have Notes</option></select>\
+</div>\
 <div class="form-group">\
-<div  style="height:200px; overflow:auto;" >\
+<div  style="height:200px; overflow:auto;" id="orderIDList" >\
 '+buildOrderIDsList(list)+'\
 </div>\
 </div>\
@@ -6931,6 +6934,33 @@ html+='<div class="container">\
 </div>';
 
 return html;
+}
+function setListSorted(event){
+var exists = $(event).val();
+console.log(exists);
+var arr = [];
+if(exists == 'All'){
+arr = notesGlobal;
+}
+
+if(exists == 'have'){
+
+arr=notesGlobal.filter(function(item){
+
+return item[1] != ''
+});
+
+
+}else if(exists == "dont"){
+
+arr=notesGlobal.filter(function(item){
+return item[1] == ''
+});
+
+}
+var builtList = buildOrderIDsList(arr);
+
+$("#orderIDList").html(builtList);
 }
 function buildNotesList(list){
 $("#updating").css("display", "block");
