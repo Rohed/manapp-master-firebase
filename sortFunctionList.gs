@@ -218,7 +218,7 @@ rett=data.sort(sortSTRINGHL(key));
 }else if(sorttype=='date'){
 rett=data.sort(sortDATEHL(key));
 }else if(key=='orderID'){
-rett=data.sort(sortOrderIDsHL);
+rett=data.filter(function(item){ return item.orderID}).sort(sortOrderIDsHL);
 }else{
 rett=data.sort(superSort2(key));
 }
@@ -231,7 +231,7 @@ rett=data.sort(sortSTRINGLH(key));
 }else if(sorttype=='date'){
 rett=data.sort(sortDATELH(key));
 }else if(key=='orderID'){
-rett=data.sort(sortOrderIDs);
+rett=data.filter(function(item){ return item.orderID}).sort(sortOrderIDs);
 }else{
 rett=data.sort(superSort1(key));
 }
