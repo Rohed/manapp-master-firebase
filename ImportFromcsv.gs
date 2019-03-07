@@ -178,7 +178,7 @@ function saveFileCsv(data, name) {
 
       var orders=JSONtoARR(rawOrders);
           var largestBatch=getLargestBatch(orders); 
-       msg = 'gere1';
+       
       //var orderID=getNewOrderID2(orders);
      var ordersByOrderID=orders.filter(function(item){ return item.orderID}).sort(sortOrderIDsHL)
      
