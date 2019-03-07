@@ -927,7 +927,7 @@ edit_flavour_mix_order=true;
         var keys=['orderdate','runtime','machineP','machineL','batch','orderID','productcode','productdescription','priority','customer','brand','recipe.name','flavour.name','bottles','stocking','btype','lid','packagingType.name','QTY','flavvalue','VGval','AGval','PGval','Nico','Nicosalts','CBDvalue','MCTval','mixing','premixed',
             'unbranded','branded','backtubed','mixing_status','production_status','printing_status','labeling_status','packaging_status','final_status','partialProduction','partialPackaging'];
        var drpdowns='';
-        html += '<tr><th></th><th></th><th></th>';
+        html += '<tr><th></th><th></th><th></th><th></th>';
         console.log(keys);
        for(var l=0;l<keys.length;l++){
        drpdowns+=('<th><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort By<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#'+keys[l]+'" sorttype="HL" onclick="return sortClick(this);">High - Low/Z - A</a></li><li><a sorttype="LH" href="#'+keys[l]+'" onclick="return sortClick(this);">Low - High/A - Z</a></li></ul></div></th>');
@@ -1176,7 +1176,7 @@ edit_flavour_mix_order=true;
       var href = event.getAttribute('href');
       href=href.slice(1, href.length);
       var sorttype = event.getAttribute('sorttype');
-  
+  console.log(sorttype +' - '+ href  +' - '+thisPage)
         $("#updating").css("display", "block");
      google.script.run.withSuccessHandler(filterResult).sortBY(largeData,sorttype,href,thisPage);
       return false;
@@ -1530,7 +1530,7 @@ var EDITORDER=false;
     if(data){
     var keys=['final_status','priority','batch','orderID','brand','productcode','productdescription','recipe.name','flavour.name','orderdate','QTY','VGval','AGval','PGval','Nico','Nicosalts','CBDvalue','MCTval','flavvalue','mixing','premixed','unbranded','branded','backtubed'];
     var drpdowns='';
-    html += '<tr><th></th><th></th>';
+    html += '<tr><th></th><th></th><th></th>';
     console.log(keys);
     for(var l=0;l<keys.length;l++){
     drpdowns+=('<th><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort By<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#'+keys[l]+'" sorttype="HL" onclick="return sortClick(this);">High - Low/Z - A</a></li><li><a sorttype="LH" href="#'+keys[l]+'" onclick="return sortClick(this);">Low - High/A - Z</a></li></ul></div></th>');
@@ -1708,7 +1708,7 @@ var EDITORDER=false;
         html += '</tr>';
         
         var drpdowns='';
-        html += '<tr><th></th><th></th>';
+        html += '<tr><th></th><th></th><th></th>';
         console.log(keys);
         for(var l=2;l<keys.length;l++){
         drpdowns+='<th><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort By<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#'+keys[l]+'" sorttype="HL" onclick="return sortClick(this);">High - Low/Z - A</a></li><li><a sorttype="LH" href="#'+keys[l]+'" onclick="return sortClick(this);">Low - High/A - Z</a></li></ul></div></th>';
@@ -1929,7 +1929,7 @@ google.script.run.withSuccessHandler(updateMachine).changeFactory(mixbatch,facto
         if(data){
          var keys=['mixing_status','orderdate','batch','orderID','productcode','productdescription','mixbatch','priority','customer','brand','recipe.name','flavour.name','bottles','btype','lid','packagingType.name','starttime','CompletionDate','Completed','Location','machineP'];
          var drpdowns='';
-         html += '<tr><th></th><th></th>';
+         html += '<tr><th></th><th></th><th></th>';
          console.log(keys);
          for(var l=0;l<keys.length;l++){
          
@@ -2045,7 +2045,7 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
         if(data){
          var keys=['production_status','orderdate','batch','numLabelsBottles','numLabelsTubes','expDate','orderID','productcode','productdescription','priority','customer','brand','recipe.name','flavour.name','bottles','btype','lid','packagingType.name','botlabel','boxname.name','starttime','CompletionDate','Completed','Location'];
          var drpdowns='';
-         html += '<tr><th></th><th></th>';
+         html += '<tr><th></th><th></th><th></th>';
          console.log(keys);
          for(var l=0;l<keys.length;l++){
          drpdowns+=('<th><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort By<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#'+keys[l]+'" sorttype="HL" onclick="return sortClick(this);">High - Low/Z - A</a></li><li><a sorttype="LH" href="#'+keys[l]+'" onclick="return sortClick(this);">Low - High/A - Z</a></li></ul></div></th>');
@@ -2156,7 +2156,7 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
          if(data){
          var keys=['production_status','orderdate','batch','orderID','productcode','productdescription','priority','customer','brand','recipe.name','flavour.name','bottles','btype','lid','packagingType.name','starttime','CompletionDate','Completed','Location','machineL'];
          var drpdowns='';
-         html += '<tr><th></th><th></th>';
+         html += '<tr><th></th><th></th><th></th>';
          console.log(keys);
          for(var l=0;l<keys.length;l++){
          drpdowns+=('<th><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort By<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#'+keys[l]+'" sorttype="HL" onclick="return sortClick(this);">High - Low/Z - A</a></li><li><a sorttype="LH" href="#'+keys[l]+'" onclick="return sortClick(this);">Low - High/A - Z</a></li></ul></div></th>');
@@ -2257,7 +2257,7 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
          if(data){
          var keys=['production_status','printing_status','orderdate','batch','orderID','productcode','productdescription','PRINTCODE','customer','brand','recipe.name','flavour.name','bottles','btype','lid','packagingType.name','starttime','CompletionDate','Completed','Location'];
          var drpdowns='';
-         html += '<tr><th></th><th></th>';
+         html += '<tr><th></th><th></th><th></th>';
          console.log(keys);
          for(var l=0;l<keys.length;l++){
          drpdowns+=('<th><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Sort By<span class="caret"></span></button><ul class="dropdown-menu"><li><a href="#'+keys[l]+'" sorttype="HL" onclick="return sortClick(this);">High - Low/Z - A</a></li><li><a sorttype="LH" href="#'+keys[l]+'" onclick="return sortClick(this);">Low - High/A - Z</a></li></ul></div></th>');
@@ -2354,7 +2354,7 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
         var keys=['orderdate','batch','orderID','productcode','productdescription','priority','PRINTCODE','customer','brand','recipe.name','flavour.name','bottles','btype','lid','packagingType.name','final_status','shipping_status','SHIPPINGCODE',
         'dateshipped','trackingNo','datedelivered', 'Location','partialProduction','partialPackaging'];
         var drpdowns='';
-        html += '<tr><th></th>';
+        html += '<tr><th></th><th></th>';
         console.log(keys);
         for(var l=0;l<keys.length;l++){
         
