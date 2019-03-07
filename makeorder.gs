@@ -731,7 +731,7 @@ function getNewOrderID() {
         orderBy: ['orderID']
     }
     var ordersByOrderID = JSONtoARR(base.getData('Orders', params));
-    ordersByOrderID = ordersByOrderID.sort(sortOrderIDsHL)
+    ordersByOrderID = ordersByOrderID.filter(function(item){ return item.orderID}).sort(sortOrderIDsHL)
     if (ordersByOrderID.length >= 1) {
         var LastorderID = ordersByOrderID[0].orderID;
         if (LastorderID) {
@@ -764,7 +764,7 @@ function getNewOrderID() {
 
 function getNewOrderID2(ordersByOrderID) {
 
-    ordersByOrderID = ordersByOrderID.sort(sortOrderIDsHL)
+    ordersByOrderID = ordersByOrderID.filter(function(item){ return item.orderID}).sort(sortOrderIDsHL)
     if (ordersByOrderID.length >= 1) {
         var LastorderID = ordersByOrderID[0].orderID;
         if (LastorderID) {

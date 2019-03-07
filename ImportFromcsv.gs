@@ -141,7 +141,7 @@ function saveFileCsv(data, name) {
   };
   
 
-    try {
+ try {
       var msg = '';
   
  
@@ -178,9 +178,10 @@ function saveFileCsv(data, name) {
 
       var orders=JSONtoARR(rawOrders);
           var largestBatch=getLargestBatch(orders); 
-   
+       msg = 'gere1';
       //var orderID=getNewOrderID2(orders);
-     var ordersByOrderID=orders.sort(sortOrderIDsHL)
+     var ordersByOrderID=orders.filter(function(item){ return item.orderID}).sort(sortOrderIDsHL)
+     
       if(ordersByOrderID.length>=1){
         var LastorderID=ordersByOrderID[0].orderID;
         if(LastorderID){
@@ -392,11 +393,11 @@ ordersByOrderID = {};
        }
         //setPriorityARR(newPRIORITIES);
       return msg+' '+i;
-    } catch (e) {
-     LOGDATA.data.push(['Failed: ',e.toString()]); 
+   } catch (e) {
+    LOGDATA.data.push(['Failed: ',msg+' - '+e.toString()]); 
       logItem(LOGDATA);
-      return msg+' '+i;
-    }
+     return msg+' '+i;
+   }
 }
 
 
