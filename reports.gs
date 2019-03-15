@@ -19,7 +19,7 @@ function getOrderIDsReporting(){
     }
   
 
-   var data=searchFor([['Orders', params]])[1].sort(sortOrderIDs);
+   var data=searchFor([['Orders', params]])[1].filter(function(item){ return item.orderID}).sort(sortOrderIDs);
    
    return data;
 
