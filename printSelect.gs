@@ -434,7 +434,7 @@ function printxero(SELECTED){
     var shipItem = base.getData("Shipping/"+data[i].batch);
      var PC = base.getData("References/ProductCodes/"+data[i].productcode);
     shipItem = shipItem? shipItem : {}
-      values.push([data[i].customer,'','','','','','','','','',data[i].orderID,shipItem.SHIPPINGCODE || "",formatDateDisplay(data[i].orderdate),shipItem.dateshipped || '','',
+      values.push([data[i].customer,'','','','','','','','','',data[i].orderID,shipItem.SHIPPINGCODE || "",shipItem.dateshipped || '',shipItem.dateshipped || '','',
                    data[i].productcode,data[i].productdescription,data[i].bottles,PC.price || '','','212 - Sales of Product Income','20% (VAT on Income)']);
       
     }
