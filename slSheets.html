@@ -1015,14 +1015,17 @@ var SEARCHNUM=0;
     }else{
     getSearchBoxData(sheet);
     }
-  RUNFIRST();
+
   function RUNFIRST(){
   if(selPage!='QTY'&&selPage!='Shipping'&&selPage!='Inventory'&&selPage!='Locations'){
   if(sheet!='MixingTeam'){
 
   $('#mixingTabs').hide();
   }
-    if(selPage=='Production' || selPage=='Packaging'){
+  
+  console.log('selPage RUNFIRST',selPage);
+    if(selPage=='Production' || selPage=='Packaging' || selPage=='Printing'){
+        $('#selButton').css('display','block');
     $('#selectAll').show();
       $('#runMulti').show();
     }else{
@@ -1037,7 +1040,7 @@ var SEARCHNUM=0;
   }
   
   }
-  
+    RUNFIRST();
  
  // populateSlSheetTable();
   function populateSlSheetTable(){
@@ -1063,6 +1066,7 @@ var SEARCHNUM=0;
      // populateSLProductionTab();
     }else if(sheet=='Printing'){
        filterpage('xx',true);
+             $('#selButton').css('display','block');
       //populateSLPrintingTab();
     }else if(sheet=='Labelling'){
       filterpage('xx',true);
@@ -1924,6 +1928,8 @@ html += '</div></th><th></th><th></th></th></th></tr>';
          };
          }
          html += '<td><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
+         html += '<a class="dropdown-item" onclick="return menuClick(this);" id="select'+data[i].batch+'" href="#select' + data[i].batch + '">Select</a>';
+
          if (data[i].movedtoNext == 0||data[i].movedtoNext == 'Busy'){    
          html+='<a class="dropdown-item" onclick="return menuClick(this);" data-toggle="modal" data-target="#myModal" href="#EditItemPrinting'+data[i].batch+'">Edit/Mark Complete</a>';
          if(data[i].movedtoNext != 'Busy'){

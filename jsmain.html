@@ -1283,6 +1283,8 @@ edit_flavour_mix_order=true;
     $('#selectionProduction').html(html);
     }else if(selPage=='Packaging'){
     $('#selectionPackaging').html(html);
+    }else if(selPage=='Printing'){
+    $('#selectionPrinting').html(html);
     }
     }
     function runmulti(){
@@ -1290,7 +1292,11 @@ edit_flavour_mix_order=true;
      google.script.run.withSuccessHandler(multRun).bulkrun(SELECTED,selPage);
     
     }
+       function runmultiSL(){
+    $("#updating").css("display", "block");
+    google.script.run.withSuccessHandler(multRun).bulkComplete(SELECTED,selPage);
     
+    }  
     function multRun(msg){
     
        alert(msg);
@@ -2086,6 +2092,8 @@ html += '<td><button page="Production" batch="'+data[i].batch+'" onclick="moveUp
             if (data[i].movedtoNext == 0) {
                 html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#PrintingMoveNext' + data[i].batch + '">Line Item Move</a>';
             }
+                            html += '<a class="dropdown-item" onclick="return menuClick(this);" id="select'+data[i].batch+'" href="#select' + data[i].batch + '">Select</a>';
+
             html += '<a class="dropdown-item" onclick="return menuClick(this);" href="#deletePrinting' + data[i].batch + '">Delete</a>';
         
         html += '<a class="dropdown-item"   value="'+ data[i].orderID +'" onclick="return menuClick(this);" href="#orderID' + data[i].orderID + '">Notes</a>';
