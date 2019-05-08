@@ -19,13 +19,14 @@ getLargestBatch(orders)
 function getLargestBatch(orders){
 
    var largestBatch=base.getData('highestBatch'); 
-  
+  largestBatch = isNaN(largestBatch) ? 0 : largestBatch;
   var batches=orders.map(function(obj) { 
     var ret;
     ret= obj.batch;
     return ret;
   });
-  batches=batches.filter(function(item){ if(item !='undefined'){return true}}).sort();
+  batches=batches.filter(function(item){ if(item !='undefined' && item !='NaN'){return true}}).sort();
+  var last = batches.slice(batches.length-10,batches.length);
   var largest= parseInt(batches[batches.length-1],10);
   if(largestBatch){
     if(largestBatch>largest){
