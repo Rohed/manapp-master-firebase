@@ -283,7 +283,7 @@ function bulkComplete(arr, page) {
         Completed: "Completed",
         batch:arr[i]
       }
-      msg+=saveItemSL(obj, page)  + "\n";
+      msg+=saveItemSL(obj, page)  + "<br>";
     }    
   }
   
