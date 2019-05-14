@@ -89,7 +89,7 @@ function saveItem(data) {
                 for (var i = 0; i < result.length; i++) {
                     Rows.push(result[i][1].row);
                 }
-                var max = Rows.reduce(function(a, b) {
+                var max = Rows.filter(function(item){return item}).reduce(function(a, b) {
                     return Math.max(a, b);
                 });
             } else {
