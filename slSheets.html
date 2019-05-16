@@ -731,22 +731,37 @@ width: 100%;
                     </li>
                     <li style="margin-top:50px;" class="nav-item">
                     <div  class='searchDates' id='searchDates'> 
-                    <div class='startSearch'>
-                    From:
-                    <input type="date" onchange='datesearch();' class="form-control" id="startSearch"/>
-                    </div>
-                    <div class='startSearch'>   
-                    To:
-                    <input type="date" onchange='datesearch();' class="form-control" id="endSearch"/>
-                    </div>
-                    <select class="form-control"  id='filterdates'> 
-                    <option value='orderdate' selected>Order Date</option>
-                    <option value='starttime'>Start Date</option>
-                    <option value='CompletionDate'>Completion Date</option>
-                    </select>
+                      <div class='startSearch'>
+                      From:
+                      <input type="date" onchange='datesearch();' class="form-control" id="startSearch"/>
+                      </div>
+                      <div class='startSearch'>   
+                      To:
+                      <input type="date" onchange='datesearch();' class="form-control" id="endSearch"/>
+                      </div>
+                      <select class="form-control"  id='filterdates'> 
+                      <option value='orderdate' selected>Order Date</option>
+                      <option value='starttime'>Start Date</option>
+                      <option value='CompletionDate'>Completion Date</option>
+                      </select>
+                    </div> 
+                    <div  class='searchDates' id='searchDatesInventory' style='margin-bottom:30px;display:none;'> 
+                      <div class='startSearch'>
+                      From:
+                      <input type="date" onchange='datesearch();' class="form-control" id="startSearch"/>
+                      </div>
+                      <div class='startSearch'>   
+                      To:
+                      <input type="date" onchange='datesearch();' class="form-control" id="endSearch"/>
+                      </div>
+                      <select class="form-control"  id='filterdates'> 
+                      <option value='orderdate' selected>Order Date</option>
+                        <option value='delivdate'>Delivery Date</option>
+                        <option value='paiddate'>Paid Date</option>
+                      </select>
                     </div> 
                     <div class='nav-item2'>
-                      <div id="searchBox" class='searchBox<?= sheetName?>'>                        
+                      <div style='margin-bottom:30px;display:none;' id="searchBox" class='searchBox<?= sheetName?>'>                        
                       </div>
         
                       </div>
@@ -1090,11 +1105,12 @@ var SEARCHNUM=0;
        $('#searchBox').css('display','none');
           $('#searchDates').css('display','none');
     }else if(sheet=='Inventory'){
-    
+     $('#paginationSelect').show();
       $('#newitem').css('display','block');
       populateInventoryTab(); 
-      $('#searchBox').css('display','none');
+      $('#searchBox').css('display','block');
           $('#searchDates').css('display','none');
+          $('#searchDatesInventory').css('display','block');
     }else if(sheet=='QTY'){
     
     $('#searchBox').css('display','none');
@@ -1155,6 +1171,8 @@ buildShippingTable(data);
    $('#selButton').css('display','block');
    $('#ordersNav').css('display','block'); 
 buildOrders(data);
+}else if (page == 'Inventory') {
+buildInventory(data);
 }
 }
 
@@ -2774,7 +2792,8 @@ function populateLocationsTab() {
 
 
     function populateInventoryTab() {
-        google.script.run.withSuccessHandler(buildInventory).getInventoryData();
+       // google.script.run.withSuccessHandler(buildInventory).getInventoryData();
+        filterpage('xx',true);
     }
 
       function buildInventory(data) {
@@ -2795,7 +2814,7 @@ function populateLocationsTab() {
             html += '<a class="dropdown-item" onclick="return menuClick(this);" page="' + data[i].page + '" href="#deleteInv' + data[i].key + '">Delete Item</a>';
             html += ' </div></div></td>';
             html += '<td>'+data[i].row+'</td>';
-            html += '<td>' + data[i].desc + '</td><td>' + data[i].orderdate + '</td><td>' + data[i].delivdate + '</td><td>' + data[i].paiddate + '</td><td>' + data[i].eta + '</td><td>' + quant + '</td><td>' + data[i].note + '</td></tr>';
+            html += '<td>' + data[i].desc + '</td><td>' +formatDateDisplay( data[i].orderdate) + '</td><td>' + formatDateDisplay(data[i].delivdate) + '</td><td>' + formatDateDisplay(data[i].paiddate) + '</td><td>' + data[i].eta + '</td><td>' + quant + '</td><td>' + data[i].note + '</td></tr>';
 
         }}
         html += '</tbody></table>';
@@ -3349,13 +3368,19 @@ equalTo: val
 
 };
 console.log(searchItems);
+if(key){
 searchItems.push([page,params]);
-
+}
 }
 }
 console.log('selPage,BASEPARAM');
 console.log(selPage,BASEPARAM);
-searchItems.push([selPage,BASEPARAM]);
+  if(selPage == 'Inventory'&& searchItems.length == 0 ){
+  
+  searchItems.push([selPage,{equalTo:'all'}]);
+  }else if(selPage != 'Inventory'){
+  searchItems.push([selPage,BASEPARAM]);
+  }
 LASTSEARCH=searchItems;
 console.log(searchItems);
  google.script.run.withSuccessHandler(filterResult).searchFor(searchItems);

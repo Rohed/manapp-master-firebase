@@ -32,6 +32,26 @@ function getFormData() {
 }
 
 function getSearchBoxKeys(page) {
+
+if(page == 'Inventory'){
+
+    var arr = [
+        ['word', 'Keyword', 'word'],
+        ['Flavours', 'Flavour', 'flavour/name'],
+        ['Recipes', 'Recipe', 'recipe/name'],
+        ['Brands', 'Brand', 'brand'],
+        ['BottleTypes', 'Bottle Type', 'botSKU'],
+        ['Lids', 'Cap Type', 'lidSKU'],
+        ['Packages', '	Pack Type', 'packagingType/name'],
+        ['Labels', 'Labels', 'label/name']
+
+    ];
+
+    return [arr, page];
+
+
+
+}
     var arr = [
         ['word', 'Keyword', 'word'],
         ['Flavours', 'Flavour', 'flavour/name'],
@@ -70,7 +90,7 @@ function getSearchValues(page, DBpage, key, num) {
             name: 'Busy'
         }], 'final_status', num];
     } else {
-        var list = JSONtoARR(base.getData(DBpage)).sort(sortSTRINGLH('name'));
+        var list = JSONtoARR(base.getData(DBpage)).filter(function(item){return item.name}).sort(sortSTRINGLH('name'));
         arr = [page, list, key, num];
     }
 
@@ -932,6 +952,17 @@ if(params.equalTo == 'all'||page=='QTY'||page=='Locations'||page=='Finctions'){
 
  return [page,JSONtoARR(base.getData(page))];
 }
+if(page=='Inventory'){
+      var data = JSONtoARR(base.getData(page));
+            var arr = [];
+            for (var i = 0; i < data.length; i++) {
+                if (JSON.stringify(data[i]).toLowerCase().match(params.equalTo.toLowerCase())) {
+                    arr.push(data[i]);
+                }
+            }
+            return [page, arr];
+
+}
   if(page == 'Shipping'){
     if(params.equalTo == 'Not Run'||params.equalTo == 'Busy'||params.equalTo == 'Completed'){
       return [page,JSONtoARR(base.getData(page))];
@@ -1075,15 +1106,12 @@ function TESTSEARCHFOR() {
 //    searcharr.push(['Shipping', params]);
 
     var params = {
-        orderBy: 'final_status',
-        equalTo: "all",
+        orderBy: 'word',
+        equalTo: "VG",
 
     }
-        var params = {
-        orderBy: 'CompletionDate',
-       startAt: new Date().getTime()-(60*60*1000*24*2),
-    }
-    searcharr.push(['Orders', params]);
+     
+    searcharr.push(['Inventory', params]);
 
    var data=searchFor(searcharr);
     Logger.log(data);
@@ -1092,6 +1120,27 @@ function TESTSEARCHFOR() {
 function searchFor(searchARR) {
 if(searchARR[0][0] =='Reporting'|| searchARR[0][0] == 'Finctions'){
 return [,]
+}
+
+if(searchARR[0][0] =='Inventory'){
+
+    var searched = [];
+    for (var i = 0; i < searchARR.length; i++) {
+
+        searched.push(getSearchedArray(searchARR[i][0], searchARR[i][1]))
+
+    }
+    var rett = searched[0];
+
+
+    for (var i = 1; i < searched.length; i++) {
+     
+            rett[1] = rett[1].concat(searched[i][1]);
+        
+    }
+ 
+    return rett;
+
 }
     var oderdatestart = base.getData("globalFilter/1");
     if(oderdatestart){

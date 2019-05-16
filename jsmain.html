@@ -353,8 +353,10 @@ $('.tabs .tab-links a').on('click', function(e) {
         selPage='QTY';
     //google.script.run.withSuccessHandler(splitPages).getQTY('Misc');
     } else if (current == '#tab10') {
-    populateInventoryTab();
+ 
         selPage='Inventory';
+     // populateInventoryTab();
+       getSearchBoxData('Inventory');
     } else if (current == '#tab11') {
    
         selPage='Finctions';
@@ -1133,13 +1135,15 @@ edit_flavour_mix_order=true;
 
 
     function newItemSuccess(e) {
-        google.script.run.withSuccessHandler(buildInventory).getInventoryData();
+          filterpage('xx',true);
+    // google.script.run.withSuccessHandler(buildInventory).getInventoryData();
         alert(e);
 
     }
 
     function populateInventoryTab() {
-        google.script.run.withSuccessHandler(buildInventory).getInventoryData();
+      //  google.script.run.withSuccessHandler(buildInventory).getInventoryData();
+       filterpage('xx',true);
     }
 
     function buildInventory(data) {
@@ -3201,71 +3205,62 @@ function postNextFile() {
 }
 
 
-function getSearchDates(data){
-console.log('data',data);
-var page=selPage;
-console.log('getsearachdates',page);
-if(page=='Functions'||page=='Reporting'){return;}
-if(page=='Mixing'){
-console.log('page');
-console.log(page);
-$('#searchDates'+page).show();
-$('#searchDatesMixingTeam').hide();
-}else if(page=='MixingTeam'||page=='FlavourMixMixingTeam'||page=='PremixColoring'){
-console.log('page');
-console.log(page);
-page='MixingTeam';
-$('#searchDatesMixing').hide();
-$('#searchDatesMixingTeam').show();
-
-}else if(page=='FlavourMixOrders'){
-page='Orders';
-
-}
-var dates={
-
-'startDate':$('#searchDates'+page+' #startSearch').val(),
-'endDate':$('#searchDates'+page+' #endSearch').val(),
-'search':$('#searchDates'+page+' #filterdates').val(),
-};
-
-  if(dates.startDate){
-    var start=new Date(dates.startDate);
-  }else{
-    
-      var start=new Date('01-01-1970');
-  }
-  if(dates.endDate){
-    var end=new Date(dates.endDate);
-  }else{
-    
-    var end=new Date('01-01-2040');
-  }
-  var ret=[];
- for(var i=0;i<data.length;i++){
- if(!data[i][dates.search]){
-  ret.push(data[i]);
-  continue;
- }
- var logitem=new Date(data[i][dates.search]);
- if(logitem.getTime()){}else{
-
- var from=data[i][dates.search].replace(/\//g,'-').split("-");
-    logitem= new Date(from[2], from[1] , from[0]);
-
- 
- }
-if(!logitem.getTime()){
-console.log(logitem.getTime(),start.getTime(),end.getTime(),dates.search,data[i].batch);
-}
-    if(start.getTime()<=logitem.getTime() && end.getTime()>=logitem.getTime()){
-          ret.push(data[i]);
-      
+function getSearchDates(data) {
+    console.log('data', data);
+    var page = selPage;
+    console.log('getsearachdates', page);
+    if (page == 'Functions' || page == 'Reporting') {
+        return;
     }
-    
- }
-  
-return ret;
+    if (page == 'Mixing') {
+        console.log('page');
+        console.log(page);
+        $('#searchDates' + page).show();
+        $('#searchDatesMixingTeam').hide();
+    } else if (page == 'MixingTeam' || page == 'FlavourMixMixingTeam' || page == 'PremixColoring') {
+        console.log('page');
+        console.log(page);
+        page = 'MixingTeam';
+        $('#searchDatesMixing').hide();
+        $('#searchDatesMixingTeam').show();
+    } else if (page == 'FlavourMixOrders') {
+        page = 'Orders';
+    }
+    var dates = {
+        'startDate': $('#searchDates' + page + ' #startSearch').val(),
+        'endDate': $('#searchDates' + page + ' #endSearch').val(),
+        'search': $('#searchDates' + page + ' #filterdates').val(),
+    };
+    console.log('dates',dates);
+    if (dates.startDate) {
+        var start = new Date(dates.startDate);
+    } else {
+        var start = new Date('01-01-1970');
+    }
+    if (dates.endDate) {
+        var end = new Date(dates.endDate);
+    } else {
+        var end = new Date('01-01-2040');
+    }
+    var ret = []; 
+    for (var i = 0; i < data.length; i++) {
+        if (!data[i][dates.search] || formatDateDisplay(data[i][dates.search]) == '') {
+         //   ret.push(data[i]);
+            continue;
+        }
+        var logitem = new Date(data[i][dates.search]);
+        if (logitem.getTime()) {} else {
+            var from = data[i][dates.search].replace(/\//g, '-').split("-");
+            logitem = new Date(from[2], from[1], from[0]);
+        }
+        if (!logitem.getTime()) {
+            console.log(logitem.getTime(), start.getTime(), end.getTime(), dates.search, data[i].batch);
+        }
+        if (start.getTime() <= logitem.getTime() && end.getTime() >= logitem.getTime()) {
+            ret.push(data[i]);
+        }
+    }
+    return ret;
 }
 
 var pagesSplit=false;
@@ -3309,6 +3304,8 @@ buildLabellingTable(data);
 buildPackagingTable(data);
 }else if (page == 'Shipping') {
 buildShippingTable(data);
+}else if (page == 'Inventory') {
+buildInventory(data);
 }
 $("#updating").css("display", "none");
 }
@@ -3337,6 +3334,7 @@ largeData=data;
     if(selPage=='QTY'){
     var chunk = 500;
     }else{
+    console.log('splitcount: '+activetab+' #splitcountselect');
     var splitcount=$(activetab+' #splitcountselect').val();
     if(splitcount!='all'){
     var chunk = parseInt(splitcount,10);
@@ -4027,8 +4025,8 @@ var INPDATA;
 
     function InventoryItemSuccess(msg) {
         alert(msg);
-        google.script.run.withSuccessHandler(buildInventory).getInventoryData();
-
+       // google.script.run.withSuccessHandler(buildInventory).getInventoryData();
+        filterpage('xx',true);
     }
     function editItem(item, page) {
         google.script.run.withSuccessHandler(buildItemFormFromExisting).getItemData(item, page);
@@ -4602,13 +4600,18 @@ orderBy : key,
 equalTo: val
 
 };
-
+if(key){
 searchItems.push([page,params]);
-
 }
 }
+}
+if(selPage == 'Inventory'&& searchItems.length == 0 ){
 
+searchItems.push([selPage,{equalTo:'all'}]);
+}else if(selPage != 'Inventory'){
 searchItems.push([selPage,BASEPARAM]);
+}
+
 LASTSEARCH=searchItems;
 console.log(searchItems);
 
