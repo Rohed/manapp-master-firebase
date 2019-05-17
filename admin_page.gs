@@ -960,6 +960,7 @@ if(page=='Inventory'){
                     arr.push(data[i]);
                 }
             }
+            
             return [page, arr];
 
 }
@@ -1138,7 +1139,10 @@ if(searchARR[0][0] =='Inventory'){
             rett[1] = rett[1].concat(searched[i][1]);
         
     }
- 
+    var sorted = rett[1].sort(function(a, b) {
+            return (a.row ? a.row : 0 ) - (b.row ? b.row : 0)
+        });
+        rett[1] = sorted;
     return rett;
 
 }

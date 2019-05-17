@@ -1163,7 +1163,7 @@ edit_flavour_mix_order=true;
     
             html += '<a class="dropdown-item" onclick="return menuClick(this);" page="' + data[i].page + '" href="#deleteInv' + data[i].key +  '">Delete Item</a>';
             html += ' </div></div></td>';
-            html += '<td>'+data[i].row+'</td>';
+            html += '<td>'+(i+1)+'</td>';
             html += '<td>' + data[i].desc + '</td><td>' + formatDateDisplay(data[i].orderdate) + '</td><td>' + formatDateDisplay(data[i].delivdate) + '</td><td>' + formatDateDisplay(data[i].paiddate) + '</td><td>' + data[i].eta + '</td><td>' + quant + '</td><td>' + data[i].note + '</td></tr>';
 
         }}
