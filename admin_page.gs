@@ -1142,7 +1142,7 @@ if(searchARR[0][0] =='Inventory'){
     var sorted = rett[1].sort(function(a, b) {
             return (a.row ? a.row : 0 ) - (b.row ? b.row : 0)
         });
-        rett[1] = sorted;
+        rett[1] = sorted.reverse();
     return rett;
 
 }

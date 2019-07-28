@@ -384,16 +384,12 @@ width: 100%;
             </div>
         </div>-->
         
- <div id="updating">
+   <div id="updating">
         <div class="loader"></div>
     </div>
     <button onclick="topFunction()" id="myBtn" title="Go to top">Back To Top</button>        
         
-        
-        
-    <div class='container-fluid'>
-    
-          <div id="checkBatches" class="modal fade bd-example-modal-lg" aria-labelledby="myLargeModalLabel" role="dialog">
+         <div id="checkBatches" class="modal fade bd-example-modal-lg" aria-labelledby="myLargeModalLabel" role="dialog">
             <div class="modal-dialog modal-lg">
 
                 <!-- Modal content-->
@@ -718,7 +714,11 @@ width: 100%;
             </div>
 
         </div>
-  </div>
+  </div>    
+        
+    <div class='container-fluid'>
+    
+     
         <div class='logo'> <img src="https://drive.google.com/uc?export=view&id=<?= LOGOIMG?>">
          <h1><?= TITLE?></h1>
         </div>
@@ -761,7 +761,7 @@ width: 100%;
                       </select>
                     </div> 
                     <div class='nav-item2'>
-                      <div style='margin-bottom:30px;display:none;' id="searchBox" class='searchBox<?= sheetName?>'>                        
+                      <div style='margin-bottom:30px;' id="searchBox" class='searchBox<?= sheetName?>'>                        
                       </div>
         
                       </div>
@@ -2813,7 +2813,7 @@ function populateLocationsTab() {
     
             html += '<a class="dropdown-item" onclick="return menuClick(this);" page="' + data[i].page + '" href="#deleteInv' + data[i].key + '">Delete Item</a>';
             html += ' </div></div></td>';
-             html += '<td>'+(i+1)+'</td>';
+             html += '<td>'+data[i].row+'</td>';
             html += '<td>' + data[i].desc + '</td><td>' +formatDateDisplay( data[i].orderdate) + '</td><td>' + formatDateDisplay(data[i].delivdate) + '</td><td>' + formatDateDisplay(data[i].paiddate) + '</td><td>' + data[i].eta + '</td><td>' + quant + '</td><td>' + data[i].note + '</td></tr>';
 
         }}
@@ -3027,7 +3027,6 @@ $('#description2').val(selectedVal.options[selectedVal.selectedIndex].getAttribu
     function populateInventoryTab() {
         google.script.run.withSuccessHandler(buildInventory).getInventoryData();
     }
-
 
 //QTY///////////
     var qtySheet="#Misc";

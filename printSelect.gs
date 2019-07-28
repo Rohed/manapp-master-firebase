@@ -201,7 +201,7 @@ function printPackagingBatches(SELECTED,force) {
 
 function testPRING(){
   
-  printShippingNote(['71474925','4670815','27656320'],1);
+  printShippingNote(['29046171','33269366','34217526','4383440'],1);
 }
 
 
@@ -280,7 +280,7 @@ function printShippingNote(data,x){
             
           }
         }else{
-          incomplete.push([data[i],list[j].batch+' '+list[j].productcode+' '+list[j].productdescription,packagingData[list[j].batch].bottles,'',packagingData[list[j].batch].bottles]);
+          incomplete.push([data[i],list[j].batch+' '+list[j].productcode+' '+list[j].productdescription,packagingData[list[j].batch] ? packagingData[list[j].batch].bottles : 0,'',packagingData[list[j].batch] ? packagingData[list[j].batch].bottles : 0]);
         }
       }
       
