@@ -1221,3 +1221,102 @@ function updatebotlid() {
     base.updateData('References/ProductCodes', ob1);
     base.updateData('References/Descriptions', ob2);
 }
+
+function importFlavourMixesFromSheet(id){
+  //id = '1LdEE2A02Kgrp64ln4WeE_h82-hglxX60M5BtTeNVyJI';
+  var sheets = SpreadsheetApp.openById(id);
+  
+  var sheet = sheets.getSheets()[0];
+  var sheetValues = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn() + 1).getValues();
+  
+  //Logger.log(sheetValues)
+ // return
+  var valuesForSending = [];
+  var alertResponse = '';
+  var obj ={};
+  
+  var LOGDATA = {
+        status: true,
+        msg: '',
+        action: 'Import Flavour Mixes From Sheet',
+        batch: 'Spreadsheet',
+        page: 'Functions',
+        user: Session.getActiveUser().getEmail(),
+        data: new Array()
+    };
+  
+  LOGDATA.data.push('Sheet ID:', id);
+  try{
+    
+      for(var i = 0;i<sheetValues.length;i++){
+        if(sheetValues[i][0] !== ""){
+        if(sheetValues[i][4].length > 1){
+          var flavourValues = sheetValues[i][4].toString().split(',')
+          var prepareValuesForSending = flavourValues.reduce(calculateFlavourValues)
+          if(prepareValuesForSending === 10){
+            valuesForSending.push(sheetValues[i]);
+          }else{
+            alertResponse +=  sheetValues[i][1] + ','
+          }
+        }else{
+          if(sheetValues[i][4] === 10){
+            valuesForSending.push(sheetValues[i]);
+          }else{
+            alertResponse += sheetValues[i][1] + ','
+          }      
+        }
+      }
+      }
+   
+    
+    var dataForSending = [];  
+    var flavoursName;
+    var dataArr = [];
+    var obj = {}
+     var flavours = {};
+    
+    for(var i = 0;i<valuesForSending.length;i++){
+       var flavourName = valuesForSending[i][1];
+       var flavourSky = valuesForSending[i][0];
+      
+      flavoursName =  valuesForSending[i][2].split(',');
+      
+      
+      for(var j = 0;j<flavoursName.length;j++){
+        var flavoursSku = valuesForSending[i][3].split(',')[j];
+        var flavoursVal = valuesForSending[i][4].split(',')[j];
+         
+       
+        flavours[flavoursSku] = {sku:flavoursSku,val:flavoursVal,name:flavoursName[j]}
+       
+        
+        
+        
+      }
+      
+      var obj =  {name:flavourName,sku:flavourSky,flavours:flavours}
+      
+      //Logger.log(obj);
+      
+       newBasicItem(obj,'FlavourMixes')
+    }
+    
+   //Logger.log(alertResponse);
+  
+  return alertResponse + " These flavour mixes were not uploaded.";
+  } catch (e) {
+        LOGDATA.status = false;
+        LOGDATA.data.push(['FAILED:', e.message]);
+        logItem(LOGDATA);
+        return e.message;
+  }
+}
+                                                        
+function calculateFlavourValues(total, num) {
+  return parseInt(total) + parseInt(num);
+}
+
+ 
+ 
+
+ 

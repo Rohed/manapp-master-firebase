@@ -72,6 +72,14 @@ var id=$('#mysheet8').val();
 
 });
 
+$('#save_sheet_flavour_mix').on('click',function(e){
+var id=$('#flavourMixSheetId').val();
+
+$("#updating").css("display", "block");
+google.script.run.withSuccessHandler(function(res){alert(res),$("#updating").css("display", "none")}).importFlavourMixesFromSheet(id);
+
+})
+
 $('#save_sheet_btn9').on('click',function(e){
 var id=$('#mysheet9').val();
     $("#updating").css("display", "block");
