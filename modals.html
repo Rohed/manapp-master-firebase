@@ -211,7 +211,7 @@
 <div class="modal fade" id="newflavourmix" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
-        <div class="modal-content" style='overflow:hidden; min-height:1100px;'>
+        <div class="modal-content" style='overflow:hidden; overflow-y: scroll;  min-height:1100px;'>
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Flavour Maker</h4>
@@ -249,9 +249,10 @@
                     <button class='btn btn-default' style="margin: 5px auto; " id='flavourmixMinusButton'><i class="fa fa-minus-square-o" aria-hidden="true"></i></button>
                 </div>
 
-                <div class="container" style='width:1100px'>
+                <div class="container" style='width:1100px;'>
                     <div class="row">
                         <div class="col-xs-6" id='bottleDiv'>
+                            <div class = "renderType">Display: <span id="renderDisplay" onclick="renderType()">ml</span><span id="renderDisplaySwitch" ></span></div>
                             <div id='totalsDiv' class='valtotal'></div>
                             <div class="bottleBlockGroup">
                                 <div class="bottleBlock" id="bottleBlock10"></div>
@@ -334,7 +335,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button id='subflavourmixForm' type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                <button id='subflavourmixForm' type="button" class="btn btn-primary" >Submit</button>
             </div>
         </div>
     </div>

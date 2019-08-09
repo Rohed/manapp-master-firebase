@@ -2777,6 +2777,7 @@ google.script.run.withSuccessHandler(buildQTYFormFromExisting).getSingleQTYData(
     
     
     };
+    var total = 0;
     if(obj.sku==''){
     alert('No SKU.');
     return 0;
@@ -2786,7 +2787,12 @@ google.script.run.withSuccessHandler(buildQTYFormFromExisting).getSingleQTYData(
     if(NEWFLAVOURSINFLAVOURMIX.indexOf(i.toString())>=0){
     var flavoursku = $(special+'flavourSelectSKU'+i).val();
     var name= $(special+'flavourSelectNAME'+i).val();
-    var val=$(special+'flavourAmount'+i).val()
+    var val=handleFloat(handleFloat($(special + 'flavourAmount' + i).val()));//Number(parseFloat($(special+'flavourAmount'+i).val()).toPrecision(3));
+    console.log('val',val);
+    if(RENDER_TYPE == '%'){
+    val = val/10;
+    } 
+    total+=val;
     var BASEflavour={
     sku:flavoursku,
     name:name,
@@ -2801,7 +2807,12 @@ google.script.run.withSuccessHandler(buildQTYFormFromExisting).getSingleQTYData(
     }else{
     var flavoursku = $(special+'flavourSelect'+i).val();
     var name= $(special+'flavourSelect'+i+' option:selected').text();
-    var val=$(special+'flavourAmount'+i).val()
+    var val=handleFloat(handleFloat($(special + 'flavourAmount' + i).val()));//Number(parseFloat($(special+'flavourAmount'+i).val()).toPrecision(3));
+    console.log('val',val);
+    if(RENDER_TYPE == '%'){
+    val = val/10;
+    } 
+    total+=val;
     obj.flavours[flavoursku]={
     sku:flavoursku,
     val:val,
@@ -2811,7 +2822,12 @@ google.script.run.withSuccessHandler(buildQTYFormFromExisting).getSingleQTYData(
 
     }
     }
-    
+    var rounded = Math.round(total);
+    console.log('rounded',rounded)
+    if(rounded != 10){
+          alert('Mix must add up to 10ml.');
+          return;
+    }
 
     
     
@@ -2829,6 +2845,7 @@ google.script.run.withSuccessHandler(buildQTYFormFromExisting).getSingleQTYData(
     
     
     console.log(obj);
+    $("#newflavourmix").modal('toggle');
     google.script.run.withSuccessHandler(newbasicitemsuccess).newBasicItem(obj, 'FlavourMixes');
     $(special+'flavourmixSKU').val('');
     $(special+'flavourmixName').val('');
@@ -5254,53 +5271,119 @@ flavournum--;
 }
 console.log('flavournum', flavournum)
 });
+var WARN_HI = false;
+var WARN_LO = false;
+function renderBottle() {
+	console.log('rendering');
+	var colorsARR = ['black', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF', '#800000', '#808000', '#008000', '#008080', ];
+	var total = 0;
+	var special = '';
+	var special2 = '';
+    var max = 10;
+    if(RENDER_TYPE == '%'){
+    max = 100 
+    }
+	if (EDIT_FLAVMIX_CONST) {
+		special2 = '.editflavourmixBody #';
+		special = '.editflavourmixBody #e';
+	} else {
+		special = '.newflavourmixBody #';
+		special2 = '.newflavourmixBody #';
+	}
+	for (var i = 1; i <= 10; i++) {
+		$(special2 + "bottleBlock" + i).css('background-color', 'white');
+	}
+	var vals = [];
+	for (var i = 1; i <= flavournum; i++) {
+		var val = handleFloat(handleFloat($(special + 'flavourAmount' + i).val()));//  Number(parseFloat($(special + 'flavourAmount' + i).val()).toPrecision(3));
+		vals.push(val);
+		for (var j = total + 1; j <= val + total + 1; j++) {
+			var rounded = 0;
+            if(RENDER_TYPE == '%'){
+            rounded = Math.floor(rounded/10);
+            }else{
+            rounded = Math.floor(j);
+            }
+    
+			if ($(special2 + "bottleBlock" + rounded)) {
+				$(special2 + "bottleBlock" + rounded).css('background-color', colorsARR[i]);
+			}
+		}
+		total += val;
+		if (total > max&& !WARN_HI) {
+			alert('Warning! Mix will exceed the 10ml limit.');
+            WARN_HI = true; 
+        }if(total < max && !WARN_LO){
+            alert('Warning! Mix will be under the 10ml limit.');
+         
+             WARN_LO = true;
+        }
+	}
+	console.log('total', total);
+	var html = '';
+	var totalHTML = '';
+    var renderDisplaySwitch = '';
+	if (total == max) {
+  
+        totalHTML = '<span style="color:green;">' + total +' '+RENDER_TYPE+ '</span>';
+        if(total){
+        renderDisplaySwitch = '<span style="color:green;">' +(RENDER_TYPE == 'ml' ? (total* 10) : (total/10))  +' '+(RENDER_TYPE == 'ml' ? '%' : 'ml')+ '</span>';
 
-function renderBottle(){
-console.log('rendering');
+        }
+        
+        
+	} else {
+		totalHTML = '<span style="color:red;">' + total +' '+RENDER_TYPE+ '</span>';
+        if(total){
+       renderDisplaySwitch = '<span style="color:red;">' +(RENDER_TYPE == 'ml' ? (total* 10) : (total/10))  +' '+(RENDER_TYPE == 'ml' ? '%' : 'ml')+ '</span>';
 
-var colorsARR=['black','#FF0000','#00FF00','#0000FF','#FFFF00','#00FFFF','#FF00FF','#800000','#808000','#008000','#008080',];
-var total=0;
-   var special='';
-   var special2='';
-   if(EDIT_FLAVMIX_CONST){
-   special2='.editflavourmixBody #';
-   special='.editflavourmixBody #e';
-   }else{
-   special='.newflavourmixBody #';
-   special2='.newflavourmixBody #';
-   }
-    for(var i=1;i<=10;i++){
-$(special2+"bottleBlock"+i).css('background-color','white');
+        } 
+	}
+    
+    
+	for (var i = 0; i < vals.length; i++) {
+		if (i < vals.length - 1) {
+			html += '<span style="color:' + colorsARR[i + 1] + ';">' + vals[i] + '</span>+';
+		} else {
+			html += '<span style="color:' + colorsARR[i + 1] + ';">' + vals[i] + '</span>=' + totalHTML;
+                $("#renderDisplaySwitch").html(renderDisplaySwitch);
+		}
+	}
+
+	$(special2 + 'totalsDiv').html(html);
 }
-var vals=[];    
-for(var i=1;i<=flavournum;i++){
-var val=parseInt($(special+'flavourAmount'+i).val(),10);
-vals.push(val);
-  for(var j=total+1;j<=val+total;j++){
-  console.log('setting color for',j);
-    $(special2+"bottleBlock"+j).css('background-color',colorsARR[i]);
+function handleFloat(num){
+return Math.round(parseFloat((Number(num) * Math.pow(10, 2)).toFixed(2))) / Math.pow(10, 2);
+}
+var RENDER_TYPE = 'ml';
+function renderType(){
+
+  if(RENDER_TYPE == 'ml'){
+  RENDER_TYPE = '%';
+  }else{
+   RENDER_TYPE = 'ml';
   }
-  total+=val;
-  if(total>10){
-  alert('Warning! Mix will exceed the 10ml limit.');
-  }
-}
-var html='';
-var totalHTML='';
-if(total==10){
-totalHTML='<span style="color:green;">'+total+'</span>';
-}else{
-totalHTML='<span style="color:red;">'+total+'</span>';
-}
-for(var i=0;i<vals.length;i++){
-if(i<vals.length-1){
-html+='<span style="color:'+colorsARR[i+1]+';">'+vals[i]+'</span>+';
-}else{
-html+='<span style="color:'+colorsARR[i+1]+';">'+vals[i]+'</span>='+totalHTML;
-}
-}
-$(special2+'totalsDiv').html(html);
-
+  
+  $("#renderDisplay").html(RENDER_TYPE);
+  	if (EDIT_FLAVMIX_CONST) {
+		special2 = '.editflavourmixBody #';
+		special = '.editflavourmixBody #e';
+	} else {
+		special = '.newflavourmixBody #';
+		special2 = '.newflavourmixBody #';
+	}
+    
+   for (var i = 1; i <= flavournum; i++) {
+		var val =handleFloat(handleFloat($(special + 'flavourAmount' + i).val())); // Number(parseFloat($(special + 'flavourAmount' + i).val()).toPrecision(3));
+	
+         if(RENDER_TYPE == 'ml'){
+        $(special + 'flavourAmount' + i).val(val/10)
+        }else{
+         $(special + 'flavourAmount' + i).val(val*10)
+        }
+	}
+    
+  renderBottle()
 }
 
 function createDropdownsForItem(item){

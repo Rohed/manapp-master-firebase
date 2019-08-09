@@ -1223,7 +1223,7 @@ function updatebotlid() {
 }
 
 function importFlavourMixesFromSheet(id){
-  //id = '1LdEE2A02Kgrp64ln4WeE_h82-hglxX60M5BtTeNVyJI';
+ //  id = '1w8ohE1Plb7pxU-vmekHXAeItyMUUkNbGhS5uhjuLYIM';
   var sheets = SpreadsheetApp.openById(id);
   
   var sheet = sheets.getSheets()[0];
@@ -1250,17 +1250,29 @@ function importFlavourMixesFromSheet(id){
     
       for(var i = 0;i<sheetValues.length;i++){
         if(sheetValues[i][0] !== ""){
-        if(sheetValues[i][4].length > 1){
-          var flavourValues = sheetValues[i][4].toString().split(',')
-          var prepareValuesForSending = flavourValues.reduce(calculateFlavourValues)
+        if(sheetValues[i][4].length > 1 || sheetValues[i][5].length > 1){
+          var flavourValues = sheetValues[i][4] ? sheetValues[i][4].toString().split(',') : sheetValues[i][5].toString().split(',')
+          var proccessed = flavourValues;
+          if(sheetValues[i][5].length){
+          proccessed=[];
+         flavourValues.map(function(item){
+         proccessed.push(handleFloat(item/10))
+         })
+          }
+          var prepareValuesForSending = proccessed.reduce(calculateFlavourValues)
           if(prepareValuesForSending === 10){
             valuesForSending.push(sheetValues[i]);
           }else{
             alertResponse +=  sheetValues[i][1] + ','
           }
         }else{
-          if(sheetValues[i][4] === 10){
-            valuesForSending.push(sheetValues[i]);
+          if(sheetValues[i][4] === 10 || sheetValues[i][5] === 100){
+           if(sheetValues[i][5] === 100){
+           valuesForSending.push(handleFloat(sheetValues[i]/10));
+           }else{
+                valuesForSending.push(sheetValues[i]);
+           }
+            
           }else{
             alertResponse += sheetValues[i][1] + ','
           }      
@@ -1284,7 +1296,12 @@ function importFlavourMixesFromSheet(id){
       
       for(var j = 0;j<flavoursName.length;j++){
         var flavoursSku = valuesForSending[i][3].split(',')[j];
-        var flavoursVal = valuesForSending[i][4].split(',')[j];
+        if(valuesForSending[i][4]){
+         var flavoursVal =handleFloat(valuesForSending[i][4].split(',')[j]);
+        }else{
+         var flavoursVal =handleFloat(valuesForSending[i][5].split(',')[j]/10);
+        }
+       
          
        
         flavours[flavoursSku] = {sku:flavoursSku,val:flavoursVal,name:flavoursName[j]}
@@ -1302,8 +1319,12 @@ function importFlavourMixesFromSheet(id){
     }
     
    //Logger.log(alertResponse);
-  
+  if(alertResponse){
   return alertResponse + " These flavour mixes were not uploaded.";
+  }else{
+    return "All flavour mixes were uploaded.";
+  }
+
   } catch (e) {
         LOGDATA.status = false;
         LOGDATA.data.push(['FAILED:', e.message]);
@@ -1313,7 +1334,7 @@ function importFlavourMixesFromSheet(id){
 }
                                                         
 function calculateFlavourValues(total, num) {
-  return parseInt(total) + parseInt(num);
+  return parseFloat(parseFloat(total).toFixed(2)) + parseFloat(parseFloat(num).toFixed(2));
 }
 
  

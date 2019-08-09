@@ -645,7 +645,7 @@ for(var j=0;j<tabs.length;j++){
 
         }else if (tabs[j] == 'FlavourMixes') {
             var data = JSONtoARR(base.getData('FlavourMixes'));
-            var headerRow = ['SKU', 'Name', 'Flavour Names', 'Flavour SKUS', 'Flavour Values'];
+            var headerRow = ['SKU', 'Name', 'Flavour Names', 'Flavour SKUS', 'Flavour Values', 'Flavour Percentages'];
             var keys = ['sku', 'name','flavournames','flavourskus','flavourvalues'];
             var values = [];
             for (var i = 0; i < data.length; i++) {
@@ -668,10 +668,13 @@ for(var j=0;j<tabs.length;j++){
                       row.push(flavarr.join(','));   
                     }else if(keys[k]=='flavourvalues'){
                          var flavarr=[];
+                         var flavarrPercentage = [];
                       for(var m=0;m<flavoursARR.length;m++){
                         flavarr.push(flavoursARR[m].val);
+                        flavarrPercentage.push(handleFloat(flavoursARR[m].val*10));
                       }
-                      row.push(flavarr.join(','));   
+                      row.push(flavarr.join(','));
+                      row.push(flavarrPercentage.join(','));
                     }else{
                         row.push(data[i][keys[k]]);
                     }
@@ -709,7 +712,9 @@ for(var j=0;j<tabs.length;j++){
   
  //  }catch(e){return e.message;}
 }
-
+function handleFloat(num){
+return Math.round(parseFloat((Number(num) * Math.pow(10, 2)).toFixed(2))) / Math.pow(10, 2);
+}
 function removeEmptyColumns(ss) {
 
 var allsheets = ss.getSheets();
