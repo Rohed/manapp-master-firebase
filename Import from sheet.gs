@@ -973,72 +973,72 @@ function importCustomersFromSheet(id) {
     return LOGDATA.msg;
 }
 
-function importFlavourMixFromSheet(id) {
-    var LOGDATA = {
-        status: true,
-        msg: '',
-        action: 'Import Flavour Mixes',
-        batch: 'Spreadsheet',
-        page: 'Flavour Mixes',
-        user: Session.getActiveUser().getEmail(),
-        data: new Array()
-    };
-    //id = '1n83FCqn4cSH5GQWDJ4BpuSuU7lOzURrXi-a807M4Wck';
-    //  var keys=['sku','name','botperPack'
-    var ss = SpreadsheetApp.openById(id);
-    LOGDATA.batch = ss.getName();
-    var data = ss.getSheets()[0].getDataRange().getValues();
-    var options = "{";
-    for (var i = 1; i < data.length; i++) {
-        var sku = data[i][0];
-        var name = data[i][1];
-        if (sku == '') {
-            LOGDATA.data.push(['Failed - NO ID:', name]);
-            LOGDATA.msg += 'Failed - NO ID: ' + name + '\n';
-            continue;
-        }
-        if (data[i][5] == 'Y') {
-            base.removeData('FlavourMixes/' + name);
-            base.removeData('FlavourMixes/' + name);
-            LOGDATA.data.push(['Removed:', sku]);
-            continue;
-        }
-        var flavourNames = data[i][2].split(',');
-        var flavourSKUs = data[i][3].split(',');
-        var flavourVals = data[i][4].split(',');
-        var options2 = "{";
-        for (var j = 0; j < flavourNames.length; j++) {
-            var item = {
-                sku: flavourSKUs[j],
-                name: flavourNames[j],
-                val: flavourVals[j],
-            }
-            options2 += '"' + item.sku + '":' + JSON.stringify(item) + ',';
-        }
-        options2 += '}';
-        var flavours = JSON.parse(options2);
-        var flavmix = {
-            sku: sku,
-            name: name,
-            flavours: flavours,
-        }
-        options += '"' + flavmix.sku + '":' + JSON.stringify(flavmix) + ',';
-        LOGDATA.data.push(['Added:', sku + ' - ' + name]);
-        LOGDATA.msg += 'Added ' + sku + '- ' + name + ' \n ';
-    }
-    options += '}';
-    try {
-        var upload = JSON.parse(options);
-        base.updateData('Customers', upload);
-        logItem(LOGDATA);
-    } catch (e) {
-        LOGDATA.status = false;
-        LOGDATA.data.push(['FAILED:', e.toString()]);
-        LOGDATA.msg = 'Failed ' + e.toString + '- ' + LOGDATA.msg + ' \n ';
-        logItem(LOGDATA);
-    }
-    return LOGDATA.msg;
-}
+//function importFlavourMixFromSheet(id) {
+//    var LOGDATA = {
+//        status: true,
+//        msg: '',
+//        action: 'Import Flavour Mixes',
+//        batch: 'Spreadsheet',
+//        page: 'Flavour Mixes',
+//        user: Session.getActiveUser().getEmail(),
+//        data: new Array()
+//    };
+//    //id = '1n83FCqn4cSH5GQWDJ4BpuSuU7lOzURrXi-a807M4Wck';
+//    //  var keys=['sku','name','botperPack'
+//    var ss = SpreadsheetApp.openById(id);
+//    LOGDATA.batch = ss.getName();
+//    var data = ss.getSheets()[0].getDataRange().getValues();
+//    var options = "{";
+//    for (var i = 1; i < data.length; i++) {
+//        var sku = data[i][0];
+//        var name = data[i][1];
+//        if (sku == '') {
+//            LOGDATA.data.push(['Failed - NO ID:', name]);
+//            LOGDATA.msg += 'Failed - NO ID: ' + name + '\n';
+//            continue;
+//        }
+//        if (data[i][5] == 'Y') {
+//            base.removeData('FlavourMixes/' + name);
+//            base.removeData('FlavourMixes/' + name);
+//            LOGDATA.data.push(['Removed:', sku]);
+//            continue;
+//        }
+//        var flavourNames = data[i][2].split(',');
+//        var flavourSKUs = data[i][3].split(',');
+//        var flavourVals = data[i][4].split(',');
+//        var options2 = "{";
+//        for (var j = 0; j < flavourNames.length; j++) {
+//            var item = {
+//                sku: flavourSKUs[j],
+//                name: flavourNames[j],
+//                val: flavourVals[j],
+//            }
+//            options2 += '"' + item.sku + '":' + JSON.stringify(item) + ',';
+//        }
+//        options2 += '}';
+//        var flavours = JSON.parse(options2);
+//        var flavmix = {
+//            sku: sku,
+//            name: name,
+//            flavours: flavours,
+//        }
+//        options += '"' + flavmix.sku + '":' + JSON.stringify(flavmix) + ',';
+//        LOGDATA.data.push(['Added:', sku + ' - ' + name]);
+//        LOGDATA.msg += 'Added ' + sku + '- ' + name + ' \n ';
+//    }
+//    options += '}';
+//    try {
+//        var upload = JSON.parse(options);
+//        base.updateData('Customers', upload);
+//        logItem(LOGDATA);
+//    } catch (e) {
+//        LOGDATA.status = false;
+//        LOGDATA.data.push(['FAILED:', e.toString()]);
+//        LOGDATA.msg = 'Failed ' + e.toString + '- ' + LOGDATA.msg + ' \n ';
+//        logItem(LOGDATA);
+//    }
+//    return LOGDATA.msg;
+//}
 
 function importPCPD() {
     //  base.removeData('References');
@@ -1223,7 +1223,7 @@ function updatebotlid() {
 }
 
 function importFlavourMixesFromSheet(id){
- //  id = '1w8ohE1Plb7pxU-vmekHXAeItyMUUkNbGhS5uhjuLYIM';
+   id = '1gF1pVf2w5oXPAOv6oqDrgU7V-3CZ6k9eaECTcJXNJZI';
   var sheets = SpreadsheetApp.openById(id);
   
   var sheet = sheets.getSheets()[0];
@@ -1256,14 +1256,14 @@ function importFlavourMixesFromSheet(id){
           if(sheetValues[i][5].length){
           proccessed=[];
          flavourValues.map(function(item){
-         proccessed.push(handleFloat(item/10))
+        proccessed.push(handleFloat(item))
          })
           }
           var prepareValuesForSending = proccessed.reduce(calculateFlavourValues)
-          if(prepareValuesForSending === 10){
+          if(prepareValuesForSending === 10 || prepareValuesForSending === 100 ){
             valuesForSending.push(sheetValues[i]);
           }else{
-            alertResponse +=  sheetValues[i][1] + ','
+            alertResponse +=  sheetValues[i][0] + ',\n'
           }
         }else{
           if(sheetValues[i][4] === 10 || sheetValues[i][5] === 100){
@@ -1274,7 +1274,7 @@ function importFlavourMixesFromSheet(id){
            }
             
           }else{
-            alertResponse += sheetValues[i][1] + ','
+            alertResponse += sheetValues[i][0] + ',\n'
           }      
         }
       }
