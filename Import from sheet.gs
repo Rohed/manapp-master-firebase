@@ -1223,7 +1223,7 @@ function updatebotlid() {
 }
 
 function importFlavourMixesFromSheet(id){
-  // id = '1gF1pVf2w5oXPAOv6oqDrgU7V-3CZ6k9eaECTcJXNJZI';
+ //   id = '14rmClkKlSk8xvjIZCpHA-2b5i7v58ctlPXSHVQgu3uI';
   var sheets = SpreadsheetApp.openById(id);
   
   var sheet = sheets.getSheets()[0];
@@ -1263,18 +1263,18 @@ function importFlavourMixesFromSheet(id){
           if(prepareValuesForSending === 10 || prepareValuesForSending === 100 ){
             valuesForSending.push(sheetValues[i]);
           }else{
-            alertResponse +=  sheetValues[i][0] + ',\n'
+            alertResponse +=  sheetValues[i][0] + ' - Sum is: '+prepareValuesForSending+',\n'
           }
         }else{
           if(sheetValues[i][4] === 10 || sheetValues[i][5] === 100){
-           if(sheetValues[i][5] === 100){
-           valuesForSending.push(handleFloat(sheetValues[i]/10));
-           }else{
-                valuesForSending.push(sheetValues[i]);
-           }
+            if(sheetValues[i][5] === 100){
+              valuesForSending.push(handleFloat(sheetValues[i]/10));
+            }else{
+              valuesForSending.push(sheetValues[i]);
+            }
             
           }else{
-            alertResponse += sheetValues[i][0] + ',\n'
+            alertResponse += sheetValues[i][0] + ' - Sum is: '+sheetValues[i][5]+',\n'
           }      
         }
       }
