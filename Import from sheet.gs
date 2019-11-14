@@ -1223,7 +1223,7 @@ function updatebotlid() {
 }
 
 function importFlavourMixesFromSheet(id){
-   id = '1gF1pVf2w5oXPAOv6oqDrgU7V-3CZ6k9eaECTcJXNJZI';
+  // id = '1gF1pVf2w5oXPAOv6oqDrgU7V-3CZ6k9eaECTcJXNJZI';
   var sheets = SpreadsheetApp.openById(id);
   
   var sheet = sheets.getSheets()[0];
